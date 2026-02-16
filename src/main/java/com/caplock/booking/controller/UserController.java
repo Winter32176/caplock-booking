@@ -1,6 +1,7 @@
 package com.caplock.booking.controller;
 
-import com.caplock.booking.entity.User;
+import com.caplock.booking.dto.UserCreationDTO;
+import com.caplock.booking.dto.UserDTOMapper;
 import com.caplock.booking.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +13,7 @@ public class UserController {
     UserService userService;
 
     public UserController() {
-        this.userService = new UserService();
+        this.userService = new UserService(new UserDTOMapper());
     }
 
     @GetMapping("/{id}")
@@ -38,7 +39,7 @@ public class UserController {
 
     // @ModelAttribute - binds form data into object model
     @PostMapping("/submit-form")
-    public String createUser(@ModelAttribute User user) {
+    public String createUser(@ModelAttribute UserCreationDTO user) {
         userService.saveUser(user);
         return "redirect:/user/all";
     }
@@ -51,8 +52,7 @@ public class UserController {
 
     // @ModelAttribute - binds form data into object model
     @PutMapping("/update/{id}")
-    public String updateUser(@PathVariable Integer id, @ModelAttribute User user) {
-        user.setId(id);
+    public String updateUser(@PathVariable Integer id, @ModelAttribute UserCreationDTO user) {
         userService.saveUser(user);
         return "redirect:/user/all";
     }

@@ -38,8 +38,9 @@
     <div th:each="user : ${users}">
         <div th:text="${user.id}"></div>
         <div th:text="${user.name}"></div>
-        <div th:text="${user.emailHash}"></div>
         <div th:text="${user.role}"></div>
+        <div th:text="${user.createdAt}"></div>
+        <div th:text="${user.updatedAt}"></div>
     </div>
     <button class="button" onclick="sayHello()">Say Hello</button>
 </div>
