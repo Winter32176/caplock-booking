@@ -16,6 +16,11 @@ public class UserController {
         this.userService = new UserService(new UserDTOMapper());
     }
 
+    @GetMapping("/")
+    public String index() {
+        return "users/index";
+    }
+
     @GetMapping("/{id}")
     public String details(@PathVariable Integer id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
@@ -53,12 +58,13 @@ public class UserController {
     // @ModelAttribute - binds form data into object model
     @PutMapping("/update/{id}")
     public String updateUser(@PathVariable Integer id, @ModelAttribute UserCreationDTO user) {
-        userService.saveUser(user);
+        userService.updateUser(id, user);
         return "redirect:/user/all";
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Integer id) {
+    public String deleteUser(@PathVariable Integer id) {
         userService.deleteUserById(id);
+        return "redirect:/user/all";
     }
 }

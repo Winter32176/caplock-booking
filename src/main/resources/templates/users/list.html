@@ -41,6 +41,11 @@
         <div th:text="${user.role}"></div>
         <div th:text="${user.createdAt}"></div>
         <div th:text="${user.updatedAt}"></div>
+        <a th:href="@{/user/edit/{id}(id=${user.id})}">Edit</a>
+        <form th:action="@{/user/{id}(id=${user.id})}" method="post">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit">Delete</button>
+        </form>
     </div>
     <button class="button" onclick="sayHello()">Say Hello</button>
 </div>

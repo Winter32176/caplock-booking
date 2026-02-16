@@ -43,6 +43,16 @@ public class UserService {
         userRepository.save(newUser);
     }
 
+    public void updateUser(Integer id, UserCreationDTO user) {
+        User updateUser = new User();
+        updateUser.setId(id);
+        updateUser.setName(user.getName());
+        updateUser.setEmailHash(user.getEmail());
+        updateUser.setPasswordHash(user.getPassword());
+        updateUser.setRole(user.getRole());
+        userRepository.update(updateUser);
+    }
+
     public void deleteUserById(Integer id) {
         userRepository.deleteById(id);
     }
