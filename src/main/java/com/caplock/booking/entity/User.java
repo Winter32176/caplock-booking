@@ -1,12 +1,10 @@
 package com.caplock.booking.entity;
 
 import com.caplock.booking.UserRole;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class User {
     private @Getter @Setter Integer id;

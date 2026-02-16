@@ -20,4 +20,16 @@ public class UserRepository {
                 .findFirst()
                 .orElse(null);
     }
+
+    public List<User> findAll() {
+        return users.stream().toList();
+    }
+
+    public void save(User user) {
+        users.add(user);
+    }
+
+    public void deleteById(Integer id) {
+        users.removeIf(user -> user.getId().equals(id));
+    }
 }
