@@ -7,6 +7,9 @@ import java.time.LocalDate;
 import java.util.Collection;
 
 public interface IEventService {
+
+    EventDetailsDto getDetails(long id);
+
     Collection<EventDto> getAllEvents();
 
     EventDto getEventByTitle(String title);

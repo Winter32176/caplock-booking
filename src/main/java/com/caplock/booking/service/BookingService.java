@@ -1,6 +1,7 @@
 package com.caplock.booking.service;
 
 import com.caplock.booking.entity.dao.BookingDao;
+import com.caplock.booking.entity.dto.BookingDetailsDto;
 import com.caplock.booking.entity.dto.BookingDto;
 import com.caplock.booking.repository.IBookingRepository;
 import com.caplock.booking.repository.IEventRepository;
@@ -21,6 +22,11 @@ public class BookingService implements IBookingService {
     private IEventRepository eventRepo;
 
     @Override
+    public BookingDetailsDto getDetails(long id) {
+        return null;
+    }
+
+    @Override
     public BookingDto getBookingById(long id) {
         var dao = bookingRepo.getBookingById(id);
         return (BookingDto) Mapper.mapDaoToDto(dao, BookingDto.class);
@@ -39,7 +45,8 @@ public class BookingService implements IBookingService {
 
         if (event == null) return Pair.with(false, "Event not found");
 
-        // The logic that triggers your Controller redirect
+        if (checkBookingExists(bookingDto)) return Pair.with(false, "Booking already exists");
+
         if (event.getBookedSeats() + bookingDto.getQty() > event.getCapacity()) {
             return Pair.with(false, "Booking full");
         }
@@ -49,7 +56,6 @@ public class BookingService implements IBookingService {
         return Pair.with(success, success ? "Success" : "Error");
     }
 
-    @Override
     public boolean checkBookingExists(BookingDto booking) {
         return bookingRepo.checkBookingExists((BookingDao) Mapper.mapDtoToDao(booking, BookingDao.class));
     }

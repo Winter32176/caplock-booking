@@ -15,6 +15,12 @@ public class EventDetailsController {
         this.eventService = eventService;
     }
 
+    @GetMapping("{id}")
+    public String getDetails(@PathVariable long id) {
+
+        return "events/Details";
+    }
+
     @DeleteMapping("/delete/{id}")
     public String deleteBooking(@PathVariable long id) {
         eventService.deleteEvent(id);

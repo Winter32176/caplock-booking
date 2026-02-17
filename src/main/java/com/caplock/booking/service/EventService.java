@@ -2,6 +2,7 @@ package com.caplock.booking.service;
 
 import com.caplock.booking.entity.StatusEventEnum;
 import com.caplock.booking.entity.dao.EventDao;
+import com.caplock.booking.entity.dto.EventDetailsDto;
 import com.caplock.booking.entity.dto.EventDto;
 import com.caplock.booking.repository.IEventRepository;
 import com.caplock.booking.util.Mapper;
@@ -17,6 +18,11 @@ public class EventService implements IEventService {
 
     @Autowired
     private IEventRepository eventRepo;
+
+    @Override
+    public EventDetailsDto getDetails(long id) {
+        return null;
+    }
 
     @Override
     public Collection<EventDto> getAllEvents() {
