@@ -17,8 +17,6 @@ public class BookingRepo implements IBookingRepository{
     ));
     @Override
     public BookingDao getBookingById(long id) {
-        // Note: Your image shows ID is a String. If the interface uses long,
-        // you may need to parse it: String.valueOf(id)
         return mockBookings.stream()
                 .filter(b -> b.getId().equals(String.valueOf(id)))
                 .findFirst()
@@ -34,7 +32,6 @@ public class BookingRepo implements IBookingRepository{
 
     @Override
     public boolean setNewBooking(BookingDao booking) {
-        // Simulate database auto-increment or UUID generation if ID is null
         if (booking.getId() == null) {
             booking.setId("BK-" + System.currentTimeMillis());
         }
@@ -43,7 +40,6 @@ public class BookingRepo implements IBookingRepository{
 
     @Override
     public boolean checkBookingExists(BookingDao booking) {
-        // Checks if this user already has a booking for the specific event
         return mockBookings.stream()
                 .anyMatch(b -> b.getUserId() == booking.getUserId() &&
                         b.getEventId() == booking.getEventId());
@@ -51,8 +47,6 @@ public class BookingRepo implements IBookingRepository{
 
     @Override
     public boolean cancelBooking(long bookingId) {
-        // Find the booking and set its status to a "Canceled" state
-        // or remove it from the list
         return mockBookings.removeIf(b -> b.getId().equals(String.valueOf(bookingId)));
     }
 }

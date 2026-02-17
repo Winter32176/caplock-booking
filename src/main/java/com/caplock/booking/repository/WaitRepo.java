@@ -33,12 +33,9 @@ public class WaitRepo implements IWaitListEntryRepository {
 
     @Override
     public boolean setWaitListToUser(long userId, WaitListEntryDao waitListEntryDao) {
-        // Set the userId and specific waitlist fields
         waitListEntryDao.setUserId(userId);
-        waitListEntryDao.setId(idCounter++); // Handle the long ID
+        waitListEntryDao.setId(idCounter++);
         waitListEntryDao.setTimestamp(LocalDateTime.now());
-
-        // Example logic for position: check how many are already waiting for this event
         long currentQueueSize = mockWaitList.stream()
                 .filter(e -> e.getEventId() == waitListEntryDao.getEventId())
                 .count();
@@ -49,7 +46,6 @@ public class WaitRepo implements IWaitListEntryRepository {
 
     @Override
     public boolean moveToBooking(WaitListEntryDao waitListEntryDao, BookingDao bookingDao) {
-        // Remove from waitlist using the long ID
         return mockWaitList.removeIf(entry -> entry.getId() == waitListEntryDao.getId());
     }
 }

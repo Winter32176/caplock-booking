@@ -20,26 +20,26 @@ public class WaitListEntryService implements IWaitListEntryService {
     @Override
     public Collection<WaitListEntryDto> getAllWaitList() {
         return waitRepo.getAllWaitList().stream()
-                .map(dao -> (WaitListEntryDto) Mapper.mapDaoToDto(dao))
+                .map(dao -> (WaitListEntryDto) Mapper.mapDaoToDto(dao,WaitListEntryDto.class))
                 .toList();
     }
 
     @Override
     public Collection<WaitListEntryDto> getAllWaitListByUser(long userId) {
         return waitRepo.getAllWaitListByUser(userId).stream()
-                .map(dao -> (WaitListEntryDto) Mapper.mapDaoToDto(dao))
+                .map(dao -> (WaitListEntryDto) Mapper.mapDaoToDto(dao,WaitListEntryDto.class ))
                 .toList();
     }
 
     @Override
     public boolean setWaitListToUser(long userId, WaitListEntryDto waitListEntryDto) {
-        WaitListEntryDao dao = (WaitListEntryDao) Mapper.mapDtoToDao(waitListEntryDto);
+        WaitListEntryDao dao = (WaitListEntryDao) Mapper.mapDtoToDao(waitListEntryDto,WaitListEntryDao.class);
         return waitRepo.setWaitListToUser(userId, dao);
     }
 
     @Override
     public boolean moveToBooking(WaitListEntryDto waitDto, BookingDao bookingDao) {
-        WaitListEntryDao waitDao = (WaitListEntryDao) Mapper.mapDtoToDao(waitDto);
+        WaitListEntryDao waitDao = (WaitListEntryDao) Mapper.mapDtoToDao(waitDto,WaitListEntryDao.class);
         return waitRepo.moveToBooking(waitDao, bookingDao);
     }
 }

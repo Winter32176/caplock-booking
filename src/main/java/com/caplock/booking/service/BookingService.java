@@ -23,13 +23,13 @@ public class BookingService implements IBookingService {
     @Override
     public BookingDto getBookingById(long id) {
         var dao = bookingRepo.getBookingById(id);
-        return (BookingDto) Mapper.mapDaoToDto(dao);
+        return (BookingDto) Mapper.mapDaoToDto(dao, BookingDto.class);
     }
 
     @Override
     public Collection<BookingDto> getAllUserBookings(long userId) {
         return bookingRepo.getAllUserBookings(userId).stream()
-                .map(dao -> (BookingDto) Mapper.mapDaoToDto(dao))
+                .map(dao -> (BookingDto) Mapper.mapDaoToDto(dao, BookingDto.class))
                 .toList();
     }
 
@@ -44,14 +44,14 @@ public class BookingService implements IBookingService {
             return Pair.with(false, "Booking full");
         }
 
-        BookingDao dao = (BookingDao) Mapper.mapDtoToDao(bookingDto);
+        BookingDao dao = (BookingDao) Mapper.mapDtoToDao(bookingDto, BookingDao.class);
         boolean success = bookingRepo.setNewBooking(dao);
         return Pair.with(success, success ? "Success" : "Error");
     }
 
     @Override
     public boolean checkBookingExists(BookingDto booking) {
-        return bookingRepo.checkBookingExists((BookingDao) Mapper.mapDtoToDao(booking));
+        return bookingRepo.checkBookingExists((BookingDao) Mapper.mapDtoToDao(booking, BookingDao.class));
     }
 
     @Override

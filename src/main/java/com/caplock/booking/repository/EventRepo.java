@@ -80,13 +80,11 @@ public class EventRepo implements IEventRepository {
 
     @Override
     public boolean deleteEvent(long id) {
-        // Removes the event if the ID matches
         return mockEvents.removeIf(event -> event.getId() == id);
     }
 
     @Override
     public boolean deleteByTitle(String title) {
-        // Removes all events with a matching title (case-insensitive)
         return mockEvents.removeIf(event -> event.getTitle().equalsIgnoreCase(title));
     }
 }
