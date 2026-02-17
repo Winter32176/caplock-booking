@@ -10,6 +10,8 @@ public interface IWaitListEntryService {
 
     Collection<WaitListEntryDto> getAllWaitListByUser(long userId);
 
+    WaitListEntryDto getAllWaitListById(long id);
+
     boolean moveToBooking(WaitListEntryDto waitListEntryDto, BookingDao bookingDao);
 
     boolean setWaitListToUser(long userId, WaitListEntryDto waitListEntryDto);

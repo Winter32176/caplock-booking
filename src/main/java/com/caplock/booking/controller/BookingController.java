@@ -1,5 +1,6 @@
 package com.caplock.booking.controller;
 
+import com.caplock.booking.controller.helper.FormShower;
 import com.caplock.booking.entity.dto.BookingDto;
 import com.caplock.booking.service.IBookingService;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,14 @@ public class BookingController {
         this.bookingService = iBookingService;
     }
 
+    @GetMapping("/")
+    public String getAllBookings(Model model) {
+        // get user id from jwt
+        long userId = -1;
+        model.addAttribute("booking-list", bookingService.getAllUserBookings(userId));
+        return "bookings/Bookings";
+    }
+
     @GetMapping("/submit-edit-form/{id}")
     public String getBookingForm(Model model, @PathVariable long id) {
         if (bookingService.getBookingById(id) != null) {
@@ -28,20 +37,10 @@ public class BookingController {
         return "bookings/Booking-form";
     }
 
-    @GetMapping("details/{id}")
-    public String getBookingDetails(@PathVariable long id, Model model) {
-        // check user rights
-        model.addAttribute("booking-details", bookingService.getBookingById(id));
-        return "bookings/Booking-details";
-    }
-
-
-    @GetMapping
-    public String getAllBookings(Model model) {
-        // get user id from jwt
-        long userId = -1;
-        model.addAttribute("booking-list", bookingService.getAllUserBookings(userId));
-        return "bookings/Bookings";
+    @GetMapping({"/form", "/form/{id}"})
+    public String form(Model model, @PathVariable(required = false) Long id) {
+        long safeId = (id == null) ? -1 : id;
+        return FormShower.showForm(model, safeId, bookingService::getBookingById, BookingDto.class);
     }
 
     @PostMapping("/submit-form")
@@ -53,6 +52,7 @@ public class BookingController {
 
         if (!isSuccess && message.contains("Booking full")) {
             int userId = (int) -1;
+            // show message
             return "redirect:/waitList/waitList/submit-edit-form/" + userId;
         } else {
             return "redirect:/bookings/Bookings";

@@ -32,6 +32,11 @@ public class WaitListEntryService implements IWaitListEntryService {
     }
 
     @Override
+    public WaitListEntryDto getAllWaitListById(long id) {
+        return null;
+    }
+
+    @Override
     public boolean setWaitListToUser(long userId, WaitListEntryDto waitListEntryDto) {
         WaitListEntryDao dao = (WaitListEntryDao) Mapper.mapDtoToDao(waitListEntryDto,WaitListEntryDao.class);
         return waitRepo.setWaitListToUser(userId, dao);

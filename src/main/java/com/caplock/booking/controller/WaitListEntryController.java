@@ -1,5 +1,6 @@
 package com.caplock.booking.controller;
 
+import com.caplock.booking.controller.helper.FormShower;
 import com.caplock.booking.entity.dto.EventDto;
 import com.caplock.booking.entity.dto.WaitListEntryDto;
 import com.caplock.booking.entity.object.WaitListEntry;
@@ -17,12 +18,10 @@ public class WaitListEntryController {
         this.waitListEntryService = WaitListEntryService;
     }
 
-    @GetMapping("/submit-edit-form/{id}")
-    public String getEventsForm(Model model, @PathVariable long id) {
-        model.addAttribute("Form-name", "Add");
-        model.addAttribute("Form-button", "Place waitList");
-
-        return "waitLists/WaitList-form";
+    @GetMapping({"/event-form", "/event-form/{id}"})
+    public String form(Model model, @PathVariable(required = false) Long id) {
+        long safeId = (id == null) ? -1 : id;
+        return FormShower.showForm(model, safeId, waitListEntryService::getAllWaitListById, WaitListEntryDto.class);
     }
 
     @GetMapping("{id}")

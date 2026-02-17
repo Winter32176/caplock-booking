@@ -64,7 +64,6 @@ public class EventService implements IEventService {
 
     @Override
     public boolean updateEvent(long id, EventDto dto) {
-        // Ensure ID from path is set on the object
         dto.setId(id);
         return eventRepo.updateEvent(id,(EventDao) Mapper.mapDtoToDao(dto, EventDao.class));
     }
@@ -79,7 +78,6 @@ public class EventService implements IEventService {
         return false;
     }
 
-    // Example of other filter methods
     @Override
     public Collection<EventDto> getEventsByStatus(StatusEventEnum status) {
         return eventRepo.getEventsByStatus(status).stream()
