@@ -15,6 +15,9 @@ public class EventDto {
     private StatusEventEnum status;
     private String category;
 
+    public EventDto() {
+    }
+
     public EventDto(long id, String title, LocalDateTime eventDate, String location, long duration, LocalDateTime startTime, LocalDateTime endTime, StatusEventEnum status, String category) {
         this.id = id;
         this.title = title;

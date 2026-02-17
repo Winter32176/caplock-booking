@@ -10,7 +10,6 @@ public class Mapper {
 
         try {
             T dao = daoClass.getDeclaredConstructor().newInstance();
-            // Copy fields from dto to dao using reflection or manual mapping
             copyProperties(dto, dao);
             return dao;
         } catch (Exception e) {
@@ -25,7 +24,6 @@ public class Mapper {
 
         try {
             T dto = dtoClass.getDeclaredConstructor().newInstance();
-            // Copy fields from dao to dto using reflection or manual mapping
             copyProperties(dao, dto);
             return dto;
         } catch (Exception e) {

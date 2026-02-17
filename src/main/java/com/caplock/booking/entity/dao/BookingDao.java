@@ -13,6 +13,9 @@ public class BookingDao {
     private long eventId;
     private long userId;
 
+    public BookingDao() {
+    }
+
     public BookingDao(String id, StatusBookingEnum status, int qty, LocalDateTime createdAt, LocalDateTime canceledAt, long eventId, long userId) {
         this.id = id;
         this.status = status;

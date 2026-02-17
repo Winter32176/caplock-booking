@@ -11,7 +11,8 @@ public class BookingDto {
     private String eventDescription;
     private String eventLocation;
     private long userId;
-
+    public BookingDto() {
+    }
     public BookingDto(String id, StatusBookingEnum status, int qty, long eventId, String eventTitle, String eventDescription, String eventLocation, long userId) {
         this.id = id;
         this.status = status;

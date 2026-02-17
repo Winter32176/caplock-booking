@@ -22,6 +22,9 @@ public class EventDao {
     private StatusEventEnum status;
     private long categoryId;
 
+    public EventDao() {
+    }
+
     public EventDao(long id, String title, String description, LocalDateTime eventDate, String location, long duration, LocalDateTime startTime, LocalDateTime endTime, long capacity, long bookedSeats, LocalDateTime bookingDeadline, LocalDateTime bookingStartTime, LocalDateTime createdAt, long createdBy, StatusEventEnum status, long categoryId) {
         this.id = id;
         this.title = title;

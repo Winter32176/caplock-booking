@@ -1,10 +1,14 @@
 package com.caplock.booking.entity.dto;
 
+
 public class BookingDetailsDto {
     private BookingDto bookingDto;
     private EventDto eventDto;
     //PayInvDto
 
+
+    public BookingDetailsDto() {
+    }
 
     public BookingDetailsDto(BookingDto bookingDto, EventDto eventDto) {
         this.bookingDto = bookingDto;

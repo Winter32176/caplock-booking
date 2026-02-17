@@ -20,9 +20,9 @@ public class BookingController {
     @GetMapping("/")
     public String getAllBookings(Model model) {
         // get user id from jwt
-        long userId = -1;
-        model.addAttribute("booking-list", bookingService.getAllUserBookings(userId));
-        return "bookings/Bookings";
+        long userId = 1;
+        model.addAttribute("bookings", bookingService.getAllUserBookings(userId));
+        return "bookings/bookings";
     }
 
     @GetMapping("/submit-edit-form/{id}")
@@ -34,7 +34,7 @@ public class BookingController {
             model.addAttribute("Form-name", "Add");
             model.addAttribute("Form-button", "Place booking");
         }
-        return "bookings/Booking-form";
+        return "bookings/booking-form";
     }
 
     @GetMapping({"/form", "/form/{id}"})
@@ -55,7 +55,7 @@ public class BookingController {
             // show message
             return "redirect:/waitList/waitList/submit-edit-form/" + userId;
         } else {
-            return "redirect:/bookings/Bookings";
+            return "redirect:/bookings/bookings";
         }
     }
 

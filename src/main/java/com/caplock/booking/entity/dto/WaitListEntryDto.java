@@ -13,6 +13,9 @@ public class WaitListEntryDto {
     private String userName;
     private long userId;
 
+    public WaitListEntryDto() {
+    }
+
     public WaitListEntryDto(StatusWaitListEnum status, String positionInQ, long eventId, String eventTitle, LocalDateTime eventDate, String userName, long userId) {
         this.status = status;
         this.positionInQ = positionInQ;

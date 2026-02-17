@@ -34,9 +34,10 @@ public class BookingService implements IBookingService {
 
     @Override
     public Collection<BookingDto> getAllUserBookings(long userId) {
-        return bookingRepo.getAllUserBookings(userId).stream()
+        var list= bookingRepo.getAllUserBookings(userId).stream()
                 .map(dao -> (BookingDto) Mapper.mapDaoToDto(dao, BookingDto.class))
                 .toList();
+        return list;
     }
 
     @Override

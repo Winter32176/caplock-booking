@@ -12,6 +12,9 @@ public class WaitListEntryDao {
     private long eventId;
     private long userId;
 
+    public WaitListEntryDao() {
+    }
+
     public WaitListEntryDao(long id, StatusWaitListEnum status, String positionInQ, LocalDateTime timestamp, long eventId, long userId) {
         this.id = id;
         this.status = status;

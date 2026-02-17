@@ -10,6 +10,9 @@ public class EventDetailsDto {
     private LocalDateTime bookingDeadline;
     private LocalDateTime bookingStartTime;
 
+    public EventDetailsDto() {
+    }
+
     public EventDetailsDto(EventDto eventDto, String description, long capacity, long bookedSeats, LocalDateTime bookingDeadline, LocalDateTime bookingStartTime) {
         this.eventDto = eventDto;
         this.description = description;
