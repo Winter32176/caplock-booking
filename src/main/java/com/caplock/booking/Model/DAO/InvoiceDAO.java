@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -13,7 +14,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class InvoiceDAO {
     private Long id;
-    private double amount;
-    private int invoiceNumber;
+    private Long bookingId;
+    private BigDecimal amount;
+    private String invoiceNumber;
     private LocalDateTime createdAt;
+    private String filePath;
 }

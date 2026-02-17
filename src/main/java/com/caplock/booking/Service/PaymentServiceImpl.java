@@ -3,6 +3,7 @@ package com.caplock.booking.Service;
 import com.caplock.booking.Mappers.CategoryMapper;
 import com.caplock.booking.Mappers.InvoiceMapper;
 import com.caplock.booking.Mappers.PaymentMapper;
+import com.caplock.booking.Model.DAO.PaymentDAO;
 import com.caplock.booking.Model.DTO.CategoryDTO;
 import com.caplock.booking.Model.DTO.InvoiceDTO;
 import com.caplock.booking.Model.DTO.PaymentDTO;
@@ -16,9 +17,11 @@ import java.util.stream.Collectors;
 @Service
 public class PaymentServiceImpl implements IPaymentService {
     private final IPaymentRepository repository;
+    private final InvoiceServiceImpl invoiceServiceImpl;
 
-    public PaymentServiceImpl(IPaymentRepository repository) {
+    public PaymentServiceImpl(IPaymentRepository repository, InvoiceServiceImpl invoiceServiceImpl) {
         this.repository = repository;
+        this.invoiceServiceImpl = invoiceServiceImpl;
     }
 
     @Override
@@ -38,6 +41,10 @@ public class PaymentServiceImpl implements IPaymentService {
 
     @Override
     public PaymentDTO create(PaymentDTO dto) {
+        PaymentDAO dao = new PaymentDAO();
+        if("PAID".equalsIgnoreCase(dto.getStatus())){
+            invoiceServiceImpl.genereteInvoice(dto.getBookingId(),dto.getAmount());
+        }
         return PaymentMapper.toDTO(
                 repository.save(PaymentMapper.toDAO(dto))
         );

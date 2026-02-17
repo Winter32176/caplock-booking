@@ -2,12 +2,18 @@ package com.caplock.booking.Service;
 
 import com.caplock.booking.Mappers.CategoryMapper;
 import com.caplock.booking.Mappers.InvoiceMapper;
+import com.caplock.booking.Model.DAO.InvoiceDAO;
 import com.caplock.booking.Model.DTO.InvoiceDTO;
 import com.caplock.booking.Repository.ICategoryRepository;
 import com.caplock.booking.Repository.IInvoiceRepository;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,4 +51,43 @@ public class InvoiceServiceImpl implements IInvoiceService{
     public void delete(Long id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public InvoiceDTO genereteInvoice(Long bookingId, BigDecimal amount) {
+        try {
+            String invoiceNumber = "INV-" + UUID.randomUUID().toString().substring(0,8);
+            LocalDateTime now = LocalDateTime.now();
+
+            String content =
+                    "===== CAPLOCK BOOKING INVOICE =====\n" +
+                            "Invoice Number: " + invoiceNumber + "\n" +
+                            "Booking ID: " + bookingId + "\n" +
+                            "Amount: " + amount + "\n" +
+                            "Date: " + now + "\n" +
+                            "====================================";
+
+            File dir = new File("invoices");
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            String filePath = "invoices/" + invoiceNumber + ".txt";
+            FileWriter writer = new FileWriter(filePath);
+            writer.write(content);
+            writer.close();
+
+            InvoiceDAO dao = new InvoiceDAO();
+            dao.setBookingId(bookingId);
+            dao.setAmount(amount);
+            dao.setInvoiceNumber(invoiceNumber);
+            dao.setCreatedAt(now);
+            dao.setFilePath(filePath);
+
+            return InvoiceMapper.toDTO(repository.save(dao));
+
+        } catch (Exception e) {
+            throw new RuntimeException("Invoice generation failed");
+        }
+    }
+
 }

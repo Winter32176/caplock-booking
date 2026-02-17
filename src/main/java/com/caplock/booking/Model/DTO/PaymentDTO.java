@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -12,8 +14,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class PaymentDTO {
     private Long id;
-    private int bookingId;
-    private int status;
+    private Long bookingId;
+    private String status;
+    private BigDecimal amount;
     private String paymentMethod;
     private LocalDate paidAt;
 
