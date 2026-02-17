@@ -1,6 +1,7 @@
 package com.caplock.booking.service;
 
 import com.caplock.booking.entity.dto.BookingDto;
+import org.javatuples.Pair;
 
 import java.util.Collection;
 
@@ -9,7 +10,7 @@ public interface IBookingService {
 
     Collection<BookingDto> getAllUserBookings(long userId);
 
-    boolean setNewBooking(BookingDto booking);
+    Pair<Boolean, String> setNewBooking(BookingDto booking);
 
     boolean checkBookingExists(BookingDto booking);
 

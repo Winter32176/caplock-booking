@@ -1,16 +1,28 @@
 package com.caplock.booking.service;
 
 import com.caplock.booking.entity.StatusEventEnum;
+import com.caplock.booking.entity.dao.EventDao;
 import com.caplock.booking.entity.dto.EventDto;
+import com.caplock.booking.repository.IEventRepository;
+import com.caplock.booking.util.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
-public class EventService implements IEventService{
+@Service
+public class EventService implements IEventService {
+
+    @Autowired
+    private IEventRepository eventRepo;
+
     @Override
     public Collection<EventDto> getAllEvents() {
-        return List.of();
+        return eventRepo.getAllEvents().stream()
+                .map(dao -> (EventDto) Mapper.mapDaoToDto(dao))
+                .toList();
     }
 
     @Override
@@ -25,7 +37,8 @@ public class EventService implements IEventService{
 
     @Override
     public EventDto getEventById(long id) {
-        return null;
+        var dao = eventRepo.getEventById(id);
+        return (EventDto) Mapper.mapDaoToDto(dao);
     }
 
     @Override
@@ -39,27 +52,32 @@ public class EventService implements IEventService{
     }
 
     @Override
-    public Collection<EventDto> getEventsByStatus(StatusEventEnum status) {
-        return List.of();
+    public boolean setEvent(EventDto dto) {
+        return eventRepo.setEvent((EventDao) Mapper.mapDtoToDao(dto));
     }
 
     @Override
-    public boolean setEvent() {
-        return false;
+    public boolean updateEvent(long id, EventDto dto) {
+        // Ensure ID from path is set on the object
+        dto.setId(id);
+        return eventRepo.updateEvent(id,(EventDao) Mapper.mapDtoToDao(dto));
     }
 
     @Override
-    public boolean updateEvent() {
-        return false;
-    }
-
-    @Override
-    public boolean deleteEvent() {
-        return false;
+    public boolean deleteEvent(long id) {
+        return eventRepo.deleteEvent(id);
     }
 
     @Override
     public boolean deleteByTitle(String title) {
         return false;
+    }
+
+    // Example of other filter methods
+    @Override
+    public Collection<EventDto> getEventsByStatus(StatusEventEnum status) {
+        return eventRepo.getEventsByStatus(status).stream()
+                .map(dao -> (EventDto) Mapper.mapDaoToDto(dao))
+                .toList();
     }
 }

@@ -21,11 +21,11 @@ public interface IEventRepository {
 
     Collection<EventDao> getEventsByStatus(StatusEventEnum status);
 
-    boolean setEvent();
+    boolean setEvent(EventDao eventDao);
 
-    boolean updateEvent();
+    boolean updateEvent(long id,EventDao eventDao);
 
-    boolean deleteEvent();
+    boolean deleteEvent(long id);
 
     boolean deleteByTitle(String title);
 }

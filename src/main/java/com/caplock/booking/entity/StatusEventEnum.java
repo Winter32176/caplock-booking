@@ -4,5 +4,6 @@ public enum StatusEventEnum {
     Archived,
     Passed,
     Soon,
-    New
+    New,
+    Full
 }

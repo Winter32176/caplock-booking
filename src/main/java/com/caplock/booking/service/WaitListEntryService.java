@@ -3,29 +3,43 @@ package com.caplock.booking.service;
 import com.caplock.booking.entity.dao.BookingDao;
 import com.caplock.booking.entity.dao.WaitListEntryDao;
 import com.caplock.booking.entity.dto.WaitListEntryDto;
+import com.caplock.booking.repository.IWaitListEntryRepository;
+import com.caplock.booking.util.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 
-public class WaitListEntryService implements IWaitListEntryService
-{
+@Service
+public class WaitListEntryService implements IWaitListEntryService {
+
+    @Autowired
+    private IWaitListEntryRepository waitRepo;
+
     @Override
     public Collection<WaitListEntryDto> getAllWaitList() {
-        return List.of();
+        return waitRepo.getAllWaitList().stream()
+                .map(dao -> (WaitListEntryDto) Mapper.mapDaoToDto(dao))
+                .toList();
     }
 
     @Override
     public Collection<WaitListEntryDto> getAllWaitListByUser(long userId) {
-        return List.of();
-    }
-
-    @Override
-    public boolean moveToBooking(WaitListEntryDto waitListEntryDto, BookingDao bookingDao) {
-        return false;
+        return waitRepo.getAllWaitListByUser(userId).stream()
+                .map(dao -> (WaitListEntryDto) Mapper.mapDaoToDto(dao))
+                .toList();
     }
 
     @Override
     public boolean setWaitListToUser(long userId, WaitListEntryDto waitListEntryDto) {
-        return false;
+        WaitListEntryDao dao = (WaitListEntryDao) Mapper.mapDtoToDao(waitListEntryDto);
+        return waitRepo.setWaitListToUser(userId, dao);
+    }
+
+    @Override
+    public boolean moveToBooking(WaitListEntryDto waitDto, BookingDao bookingDao) {
+        WaitListEntryDao waitDao = (WaitListEntryDao) Mapper.mapDtoToDao(waitDto);
+        return waitRepo.moveToBooking(waitDao, bookingDao);
     }
 }
