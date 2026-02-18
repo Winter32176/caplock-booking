@@ -21,6 +21,7 @@ public class TicketServiceImplementation implements TicketService {
 
     private final TicketRepository ticketRepository;
     private final ModelMapper modelMapper;
+    private final QrService qrService;
 
     @Override
     public Response<List<TicketDTO>> findAll() {
@@ -59,6 +60,15 @@ public class TicketServiceImplementation implements TicketService {
         log.info("Creating ticket for holder: {}", newTicket.getHolderName());
 
         Ticket savedTicket = ticketRepository.save(newTicket);
+
+        try {
+            String qrPath = qrService.generateAndSave(savedTicket.getTicketNumber(), savedTicket.getTicketNumber());
+            savedTicket.setQrCode(qrPath);
+            ticketRepository.save(savedTicket);
+            log.info("QR code saved to: {}", qrPath);
+        } catch (Exception e) {
+            log.error("Failed to generate QR code for ticket: {}", savedTicket.getTicketNumber(), e);
+        }
 
         log.info("Ticket created with id: {}", savedTicket.getId());
 

@@ -30,7 +30,6 @@ public class TicketController {
         return "tickets/create-form";
     }
 
-    // TODO: create QR code that can be scanned
     @PostMapping("/create")
     public Response<TicketDTO> createTicket(@RequestBody Ticket newTicket) {
         return ticketService.create(newTicket);
