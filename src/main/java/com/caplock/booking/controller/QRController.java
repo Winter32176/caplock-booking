@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+// Source: https://medium.com/@sriranjankapilan/generating-and-decoding-qr-codes-barcodes-with-spring-boot-and-zxing-f4b8d11c4b59
+
 @RestController
 @RequestMapping("/qr-code")
 public class QRController {
