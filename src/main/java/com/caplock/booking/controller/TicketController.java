@@ -46,4 +46,9 @@ public class TicketController {
         return ticketService.update(id, updatedTicket);
     }
 
+    @DeleteMapping("/{id}")
+    public Response<?> deleteTicket(@PathVariable Long id) {
+        return ticketService.deleteById(id);
+    }
+
 }

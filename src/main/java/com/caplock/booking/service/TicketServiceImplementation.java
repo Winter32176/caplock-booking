@@ -71,4 +71,15 @@ public class TicketServiceImplementation implements TicketService {
                 .build();
     }
 
+    @Override
+    public Response<?> deleteById(Long id) {
+        ticketRepository.deleteById(id);
+
+        return Response.<Void>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Ticket deleted successfully")
+                .data(null)
+                .build();
+    }
+
 }

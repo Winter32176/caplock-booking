@@ -12,5 +12,6 @@ public interface TicketService {
     Response<List<TicketDTO>> findByHolderName(String holderName);
     Response<TicketDTO> create(Ticket newTicket);
     Response<?> update(Long id, Ticket updatedTicket);
+    Response<?> deleteById(Long id);
 
 }
