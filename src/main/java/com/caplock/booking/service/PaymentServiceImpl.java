@@ -40,9 +40,7 @@ public class PaymentServiceImpl implements IPaymentService {
         if("PAID".equalsIgnoreCase(dto.getStatus())){
             invoiceServiceImpl.genereteInvoice(dto.getBookingId(),dto.getAmount());
         }
-        return PaymentMapper.toDTO(
-                repository.save(PaymentMapper.toDAO(dto))
-        );
+        return PaymentMapper.toDTO(repository.save(dao));
     }
 
     @Override

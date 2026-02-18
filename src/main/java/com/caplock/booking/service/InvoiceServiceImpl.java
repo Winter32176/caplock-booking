@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,9 +71,9 @@ public class InvoiceServiceImpl implements IInvoiceService{
             }
 
             String filePath = "invoices/" + invoiceNumber + ".txt";
-            FileWriter writer = new FileWriter(filePath);
-            writer.write(content);
-            writer.close();
+            try (FileWriter writer = new FileWriter(filePath)) {
+                writer.write(content);
+            }
 
             InvoiceDAO dao = new InvoiceDAO();
             dao.setBookingId(bookingId);
@@ -83,8 +84,8 @@ public class InvoiceServiceImpl implements IInvoiceService{
 
             return InvoiceMapper.toDTO(repository.save(dao));
 
-        } catch (Exception e) {
-            throw new RuntimeException("Invoice generation failed");
+        } catch (IOException e) {
+            throw new RuntimeException("Invoice generation failed", e);
         }
     }
 
