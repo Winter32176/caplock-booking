@@ -59,4 +59,16 @@ public class TicketServiceImplementation implements TicketService {
                 .build();
     }
 
+    @Override
+    public Response<?> update(Long id, Ticket updatedTicket) {
+        ticketRepository.findById(id).ifPresent(ticket -> updatedTicket.setId(ticket.getId()));
+        ticketRepository.save(updatedTicket);
+
+        return Response.<Void>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Ticket updated successfully")
+                .data(null)
+                .build();
+    }
+
 }

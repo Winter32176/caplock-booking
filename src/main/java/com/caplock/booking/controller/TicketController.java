@@ -30,9 +30,20 @@ public class TicketController {
         return "tickets/create-form";
     }
 
+    // TODO: create QR code that can be scanned
     @PostMapping("/create")
     public Response<TicketDTO> createTicket(@RequestBody Ticket newTicket) {
         return ticketService.create(newTicket);
+    }
+
+    @GetMapping("/edit-form")
+    public String getEditTicketForm() {
+        return "tickets/edit-form";
+    }
+
+    @PutMapping("/edit/{id}")
+    public Response<?> editTicket(@PathVariable Long id, @RequestBody Ticket updatedTicket) {
+        return ticketService.update(id, updatedTicket);
     }
 
 }
