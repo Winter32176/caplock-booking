@@ -1,9 +1,16 @@
 package com.caplock.booking.entity.dao;
 
 import com.caplock.booking.entity.StatusBookingEnum;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
-
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 public class BookingDao {
     private String id;
     private StatusBookingEnum status;
@@ -13,72 +20,4 @@ public class BookingDao {
     private long eventId;
     private long userId;
 
-    public BookingDao() {
-    }
-
-    public BookingDao(String id, StatusBookingEnum status, int qty, LocalDateTime createdAt, LocalDateTime canceledAt, long eventId, long userId) {
-        this.id = id;
-        this.status = status;
-        this.qty = qty;
-        this.createdAt = createdAt;
-        this.canceledAt = canceledAt;
-        this.eventId = eventId;
-        this.userId = userId;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public StatusBookingEnum getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusBookingEnum status) {
-        this.status = status;
-    }
-
-    public int getQty() {
-        return qty;
-    }
-
-    public void setQty(int qty) {
-        this.qty = qty;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getCanceledAt() {
-        return canceledAt;
-    }
-
-    public void setCanceledAt(LocalDateTime canceledAt) {
-        this.canceledAt = canceledAt;
-    }
-
-    public long getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(long eventId) {
-        this.eventId = eventId;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
 }
