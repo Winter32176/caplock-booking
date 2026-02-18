@@ -5,6 +5,7 @@ import com.caplock.booking.dto.TicketDTO;
 
 import com.caplock.booking.entity.Ticket;
 import com.caplock.booking.repository.jpa.TicketRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -72,10 +73,13 @@ public class TicketServiceImplementation implements TicketService {
 
     @Override
     public Response<?> update(Long id, Ticket updatedTicket) {
-        log.info("Updating ticket with id: {}", id);
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Ticket not found with id: " + id));
 
-        ticketRepository.findById(id).ifPresent(ticket -> updatedTicket.setId(ticket.getId()));
+        updatedTicket.setId(ticket.getId());
         ticketRepository.save(updatedTicket);
+
+        log.info("Updated ticket with id: {}", id);
 
         return Response.<Void>builder()
                 .statusCode(HttpStatus.OK.value())
@@ -86,9 +90,13 @@ public class TicketServiceImplementation implements TicketService {
 
     @Override
     public Response<?> deleteById(Long id) {
-        log.info("Deleting ticket with id: {}", id);
+        if (!ticketRepository.existsById(id)) {
+            throw new EntityNotFoundException("Ticket not found with id: " + id);
+        }
 
         ticketRepository.deleteById(id);
+
+        log.info("Deleted ticket with id: {}", id);
 
         return Response.<Void>builder()
                 .statusCode(HttpStatus.OK.value())
