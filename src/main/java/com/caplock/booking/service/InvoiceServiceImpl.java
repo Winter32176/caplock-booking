@@ -54,16 +54,26 @@ public class InvoiceServiceImpl implements IInvoiceService{
     @Override
     public InvoiceDTO genereteInvoice(Long bookingId, BigDecimal amount) {
         try {
-            String invoiceNumber = "INV-" + UUID.randomUUID().toString().substring(0,8);
+            String invoiceNumber = "INV-" + UUID.randomUUID().toString().substring(0, 8);
             LocalDateTime now = LocalDateTime.now();
 
-            String content =
-                    "===== CAPLOCK BOOKING INVOICE =====\n" +
-                            "Invoice Number: " + invoiceNumber + "\n" +
-                            "Booking ID: " + bookingId + "\n" +
-                            "Amount: " + amount + "\n" +
-                            "Date: " + now + "\n" +
-                            "====================================";
+            String lineSeparator = System.getProperty("line.separator");
+
+            StringBuilder contentBuilder = new StringBuilder();
+
+            contentBuilder.append("===== CAPLOCK BOOKING INVOICE =====")
+                    .append(lineSeparator)
+                    .append("Invoice Number: ").append(invoiceNumber)
+                    .append(lineSeparator)
+                    .append("Booking ID: ").append(bookingId)
+                    .append(lineSeparator)
+                    .append("Amount: ").append(amount)
+                    .append(lineSeparator)
+                    .append("Date: ").append(now)
+                    .append(lineSeparator)
+                    .append("====================================");
+
+            String content = contentBuilder.toString();
 
             File dir = new File("invoices");
             if (!dir.exists()) {
