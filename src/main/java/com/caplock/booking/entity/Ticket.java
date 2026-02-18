@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -22,6 +23,13 @@ public class Ticket {
 
     @Column(unique = true)
     private String ticketNumber;
+
+    @PrePersist
+    private void generateTicketNumber() {
+        if (this.ticketNumber == null) {
+            this.ticketNumber = UUID.randomUUID().toString();
+        }
+    }
 
     private String qrCode;
 
