@@ -15,7 +15,6 @@ import java.util.List;
 public class BookingDto {
     private String id;
     private StatusBookingEnum status;
-    private int qty;
     private long eventId;
     private String eventTitle;
     private String eventDescription;

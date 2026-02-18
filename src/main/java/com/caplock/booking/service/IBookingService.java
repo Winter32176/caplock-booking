@@ -8,9 +8,9 @@ import org.javatuples.Pair;
 import java.util.Collection;
 
 public interface IBookingService {
-    BookingDetailsDto getDetails(long id);
+    BookingDetailsDto getDetails(String id);
 
-    BookingDto getBookingById(long id);
+    BookingDto getBookingById(String id);
 
     Collection<BookingDto> getAllUserBookings(long userId);
 

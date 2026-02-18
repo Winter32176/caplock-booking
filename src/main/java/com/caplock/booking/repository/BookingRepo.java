@@ -19,9 +19,9 @@ public class BookingRepo implements IBookingRepository{
 
 
     @Override
-    public BookingDao getBookingById(long id) {
+    public BookingDao getBookingById(String id) {
         var a= mockBookings.stream()
-                .filter(b -> b.getUserId()==(id))
+                .filter(b -> Objects.equals(b.getId(), id))
                 .findFirst()
                 .orElse(null);
         return a;
@@ -53,5 +53,10 @@ public class BookingRepo implements IBookingRepository{
     @Override
     public boolean cancelBooking(String bookingId) {
         return mockBookings.removeIf(b -> b.getId().equals(String.valueOf(bookingId)));
+    }
+
+    @Override
+    public String genBookingId() {
+        return "BK-" + System.currentTimeMillis();
     }
 }

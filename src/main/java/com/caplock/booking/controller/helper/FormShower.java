@@ -5,36 +5,45 @@ import com.caplock.booking.entity.dto.EventDto;
 import org.springframework.ui.Model;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.function.LongFunction;
+import java.util.function.Function;
 
 public class FormShower {
 
     public static <T> String showForm(
             Model model,
             long id,
-            LongFunction<T> getById,
+            String strId,
+            Function<Long, T> getByIdLong,
+            Function<String, T> getByIdString,
             Class<T> dtoClass
     ) {
-        boolean editing = (id > 0) && getById.apply(id) != null;
+        boolean editing;
+        if (strId == null) {
+            editing = (id > 0) && getByIdLong.apply(id) != null;
+        }else{
+            editing = getByIdString.apply(strId) != null;
+        }
+
 
         String noun;
         String view;
         if (dtoClass == EventDto.class) {
             noun = "event";
             view = "events/eventForm";
-        } else if(dtoClass== BookingDto.class) {
+        } else if (dtoClass == BookingDto.class) {
             noun = "booking";
             view = "bookings/bookingForm";
-        }else{
+        } else {
             noun = "waitList";
             view = "waitList/waitListForm";
         }
         try {
-            model.addAttribute(noun,dtoClass.getDeclaredConstructor().newInstance());
+            model.addAttribute(noun, dtoClass.getDeclaredConstructor().newInstance());
             model.addAttribute("formName", editing ? "Edit" : "Add");
             model.addAttribute("formButton", editing ? "Update" : "Place " + noun);
 
-        }catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e){
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException e) {
             //log
         }
 

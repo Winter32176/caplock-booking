@@ -5,14 +5,12 @@ import com.caplock.booking.entity.dto.BookingDetailsDto;
 import com.caplock.booking.entity.dto.BookingDto;
 import com.caplock.booking.entity.dto.EventDto;
 import com.caplock.booking.repository.IBookingRepository;
-import com.caplock.booking.repository.IEventRepository;
 import com.caplock.booking.util.Mapper;
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 public class BookingService implements IBookingService {
@@ -25,7 +23,7 @@ public class BookingService implements IBookingService {
     private ISeatReservationService seatReservationService;
 
     @Override
-    public BookingDetailsDto getDetails(long id) {
+    public BookingDetailsDto getDetails(String id) {
         BookingDao bookingDao = bookingRepo.getBookingById(id);
         if (bookingDao == null) return null;
 
@@ -40,7 +38,7 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public BookingDto getBookingById(long id) {
+    public BookingDto getBookingById(String id) {
         var dao = bookingRepo.getBookingById(id);
         return Mapper.combine(BookingDto.class, dao, eventService.getEventById(dao.getEventId()));
     }
@@ -55,7 +53,8 @@ public class BookingService implements IBookingService {
 
     @Override
     public Pair<Boolean, String> setNewBooking(BookingDto bookingDto) {
-        var val = seatReservationService.assignSeats(bookingDto.getId(), bookingDto.getEventId(), bookingDto.getQty(), bookingDto.getSeats());
+        bookingDto.setId(bookingRepo.genBookingId());
+        var val = seatReservationService.assignSeats(bookingDto.getId(), bookingDto.getEventId(), bookingDto.getSeats());
         if (!val.getValue0()) return val;
         BookingDao dao = Mapper.splitOne(bookingDto, BookingDao.class);
         boolean success = bookingRepo.setNewBooking(dao);
@@ -64,6 +63,9 @@ public class BookingService implements IBookingService {
 
     @Override
     public boolean cancelBooking(String bookingId) {
+        var b= bookingRepo.getBookingById(bookingId);
+        var val = seatReservationService.clearReservationOfSeats(b.getId(), b.getEventId());
+        if (!val) return val;
         return bookingRepo.cancelBooking(bookingId);
     }
 }

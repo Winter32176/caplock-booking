@@ -28,7 +28,7 @@ public class EventController {
     @GetMapping({"/form", "/form/{id}"})
     public String form(Model model, @PathVariable(required = false) Long id) {
         long safeId = (id == null) ? -1 : id;
-        return FormShower.showForm(model, safeId, eventService::getEventById, EventDto.class);
+        return FormShower.showForm(model, safeId, null, eventService::getEventById, null, EventDto.class);
     }
 
     @PostMapping("/submitForm")

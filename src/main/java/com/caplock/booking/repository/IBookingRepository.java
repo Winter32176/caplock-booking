@@ -5,7 +5,7 @@ import com.caplock.booking.entity.dao.*;
 import java.util.Collection;
 
 public interface IBookingRepository {
-    BookingDao getBookingById(long id);
+    BookingDao getBookingById(String id);
 
     Collection<BookingDao> getAllUserBookings(long userId);
 
@@ -14,4 +14,6 @@ public interface IBookingRepository {
     boolean checkBookingExists(String bookingId, long eventId);
 
     boolean cancelBooking(String bookingId);
+
+    String genBookingId();
 }

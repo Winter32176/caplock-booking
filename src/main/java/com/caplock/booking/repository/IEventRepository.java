@@ -29,7 +29,7 @@ public interface IEventRepository {
 
     boolean deleteByTitle(String title);
 
-    boolean unAssignSeat(long eventId, String eventTitle, String seat);
+    boolean unAssignSeat(long eventId, String eventTitle, String bookId);
 
     boolean assignSeat(long eventId, String eventTitle, String bookingId, String seat);
 }

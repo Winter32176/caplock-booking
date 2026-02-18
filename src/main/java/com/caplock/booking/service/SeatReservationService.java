@@ -19,25 +19,25 @@ public class SeatReservationService implements ISeatReservationService {
     }
 
     @Override
-    public Pair<Boolean, String> assignSeats(String bookId, long eventId, long qty, List<String> seats) {
+    public Pair<Boolean, String> assignSeats(String bookId, long eventId,List<String> seats) {
         var eventDet = eventService.getDetails(eventId);
 
         if (eventDet == null) return Pair.with(false, "Event not found");
 
         if (bookingRepository.checkBookingExists(bookId, eventId)) return Pair.with(false, "Booking already exists");
 
-        if (eventDet.getBookedSeats() + qty > eventDet.getCapacity()) {
+        if (eventDet.getBookedSeats() + seats.size() > eventDet.getCapacity()) {
             return Pair.with(false, "Booking full only " + (eventDet.getCapacity() - eventDet.getBookedSeats()) + "can be only added");
         }
 
         boolean bookedSeats = false;
-        for (int i = 0; i < qty; i++) {
-            if (eventService.assignSeat(eventId, eventDet.getEventDto().getTitle(), bookId, seats.get(i))) {
+        for (int i = 0; i < seats.size(); i++) {
+            if (eventService.assignSeat(eventId, bookId, seats.get(i))) {
                 bookedSeats = true;
                 break;
             }
         }
-        if (bookedSeats || qty<1)
+        if (bookedSeats || seats.size() < 1)
             return Pair.with(false, "Some seat is reserved");
 
 
@@ -45,12 +45,11 @@ public class SeatReservationService implements ISeatReservationService {
     }
 
     @Override
-    public boolean clearReservationOfSeats(String bookId, long eventId, List<String> seats) {
+    public boolean clearReservationOfSeats(String bookId, long eventId) {
         boolean fail = false;
-        for (String seat : seats) {
-            if (eventService.unassignSeat(eventId, bookId, seat))
-                fail = true;
-        }
+        if (eventService.unassignSeat(eventId, bookId))
+            fail = true;
+
         return !fail;
     }
 }

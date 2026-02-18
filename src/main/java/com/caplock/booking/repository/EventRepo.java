@@ -7,10 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -123,24 +120,36 @@ public class EventRepo implements IEventRepository {
     }
 
     @Override
-    public boolean unAssignSeat(long eventId, String eventTitle, String seat) {
-        try {
-            assert seat != null;
-            lock.lock();
-            if (eventsSeat.containsKey(eventTitle) & eventsSeat.get(eventTitle).containsKey(seat)) {
-                eventsSeat.get(eventTitle).replace(seat, null);
+    public boolean unAssignSeat(long eventId, String eventTitle, String bookId) {
+        if (eventsSeat.containsKey(eventTitle)) {
+            var seatMap = (ConcurrentHashMap<String, SeatReserver>) eventsSeat.get(eventTitle);
+
+            var reservedSeats = seatMap.keySet().stream()
+                    .filter(b -> Objects.equals(b, bookId)).toList();
+            try {
+                assert !reservedSeats.isEmpty();
+                lock.lock();
+                for (var seat : reservedSeats) {
+                    if (eventsSeat.get(eventTitle).containsKey(seat)) {
+                        eventsSeat.get(eventTitle).replace(seat, null);
+
+                    } else {
+                        return false;
+                    }
+                }
 //            if( eventsSeat.get(event.getTitle()).get(seat)!=null){
 //                return false;
 //            }
-            } else {
-                return false;
+
+            } catch (Exception ex) {
+                //log
+            } finally {
+                lock.unlock();
             }
-        } catch (Exception ex) {
-            //log
-        } finally {
-            lock.unlock();
+            return true;
         }
-        return true;
+        return false;
+
     }
 
     private boolean syncData() {

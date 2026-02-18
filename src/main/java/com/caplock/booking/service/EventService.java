@@ -92,11 +92,14 @@ public class EventService implements IEventService {
         return false;
     }
 
-    public boolean unassignSeat(long eventId, String eventTitle, String seat) {
-        return eventRepo.unAssignSeat(eventId, eventTitle, seat);
+    @Override
+    public boolean unassignSeat(long eventId, String bookId) {
+        return eventRepo.unAssignSeat(eventId, getEventById(eventId).getTitle(), bookId);
     }
 
-    public boolean assignSeat(long eventId, String eventTitle, String bookingId, String seat) {
-        return eventRepo.assignSeat(eventId, eventTitle, bookingId, seat);
+    @Override
+    public boolean assignSeat(long eventId,  String bookingId, String seat) {
+
+        return eventRepo.assignSeat(eventId, getEventById(eventId).getTitle(), bookingId, seat);
     }
 }

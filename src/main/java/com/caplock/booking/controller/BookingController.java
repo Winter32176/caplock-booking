@@ -33,19 +33,16 @@ public class BookingController {
     }
 
     @GetMapping({"/form", "/form/{id}"})
-    public String form(Model model, @PathVariable(required = false) Long id) {
-        long safeId = (id == null) ? -1 : id;
-        return FormShower.showForm(model, safeId, bookingService::getBookingById, BookingDto.class);
+    public String form(Model model, @PathVariable(required = false) String id) {
+        return FormShower.showForm(model, -1, id,null ,bookingService::getBookingById, BookingDto.class);
     }
 
     @PostMapping("/submitForm")
     public String setBooking(@ModelAttribute("booking") BookingDto booking) {
-
-
         var a = new ArrayList<String>() {
         };
         a.add("1");
-        a.add("1");
+        a.add("2");
         a.add("3");
         booking.setSeats(a);
         var result = bookingService.setNewBooking(booking);
@@ -62,7 +59,7 @@ public class BookingController {
             return "redirect:/bookings/form/";
         }
 
-            return "redirect:/bookings/";
+        return "redirect:/bookings/";
 
     }
 
