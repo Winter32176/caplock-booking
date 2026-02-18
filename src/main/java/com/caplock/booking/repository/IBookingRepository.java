@@ -11,7 +11,7 @@ public interface IBookingRepository {
 
     boolean setNewBooking(BookingDao booking);
 
-    boolean checkBookingExists(BookingDao booking);
+    boolean checkBookingExists(String bookingId, long eventId);
 
     boolean cancelBooking(String bookingId);
 }

@@ -1,7 +1,7 @@
 package com.caplock.booking.repository;
 
-import com.caplock.booking.UserRole;
-import com.caplock.booking.entity.User;
+import com.caplock.booking.entity.UserRole;
+import com.caplock.booking.entity.object.User;
 
 import java.util.ArrayList;
 import java.util.List;

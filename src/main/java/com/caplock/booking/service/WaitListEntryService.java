@@ -6,6 +6,7 @@ import com.caplock.booking.entity.dto.*;
 import com.caplock.booking.entity.object.*;
 import com.caplock.booking.repository.IWaitListEntryRepository;
 import com.caplock.booking.util.Mapper;
+import com.caplock.booking.util.UserDTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,9 @@ public class WaitListEntryService implements IWaitListEntryService {
 
     @Autowired
     private IWaitListEntryRepository waitRepo;
-//    @Autowired
-//    private IUserService userService;
+    private final UserService userService = new UserService(new UserDTOMapper());
+
+
 
     @Autowired
     private IEventService eventService;
@@ -31,7 +33,7 @@ public class WaitListEntryService implements IWaitListEntryService {
                         WaitListEntryDto.class,
                         dao,
                         eventService.getEventById(dao.getEventId()) ,
-                        new User(15, "Name")))  //userService.getUserById(dao.getUserId)))
+                        userService.getUserById((int) dao.getUserId())))
                  .toList();
 
 
@@ -44,7 +46,7 @@ public class WaitListEntryService implements IWaitListEntryService {
                         WaitListEntryDto.class,
                         dao,
                         eventService.getEventById(dao.getEventId()) ,
-                        new User(15, "Name")))
+                        userService.getUserById((int) dao.getUserId())))
                 .toList();
     }
 

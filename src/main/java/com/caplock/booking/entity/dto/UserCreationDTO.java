@@ -1,6 +1,6 @@
-package com.caplock.booking.dto;
+package com.caplock.booking.entity.dto;
 
-import com.caplock.booking.UserRole;
+import com.caplock.booking.entity.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UserDTO {
-    private Integer id;
+public class UserCreationDTO {
     private String name;
+    private String email;
+    private String password;
     private UserRole role;
-    private String createdAt;
-    private String updatedAt;
 }

@@ -91,4 +91,6 @@ public class EventService implements IEventService {
     public boolean deleteByTitle(String title) {
         return false;
     }
+
+    public boolean assignSeats(long eventId, S) {}
 }

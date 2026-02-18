@@ -53,24 +53,10 @@ public class BookingService implements IBookingService {
 
     @Override
     public Pair<Boolean, String> setNewBooking(BookingDto bookingDto) {
-        // refactor in different method in eventService for checking seats
-        var eventDet = eventService.getDetails(bookingDto.getEventId());
-
-        if (eventDet == null) return Pair.with(false, "Event not found");
-
-        if (checkBookingExists(bookingDto)) return Pair.with(false, "Booking already exists");
-
-        if (eventDet.getBookedSeats() + bookingDto.getQty() > eventDet.getCapacity()) {
-            return Pair.with(false, "Booking full");
-        }
 
         BookingDao dao =Mapper.splitOne(bookingDto, BookingDao.class);
         boolean success = bookingRepo.setNewBooking(dao);
         return Pair.with(success, success ? "Success" : "Error");
-    }
-
-    public boolean checkBookingExists(BookingDto booking) {
-        return bookingRepo.checkBookingExists(Mapper.splitOne(booking, BookingDao.class));
     }
 
     @Override

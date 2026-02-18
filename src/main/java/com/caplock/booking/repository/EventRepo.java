@@ -1,6 +1,7 @@
 package com.caplock.booking.repository;
 
 import com.caplock.booking.entity.StatusEventEnum;
+import com.caplock.booking.entity.dao.BookingDao;
 import com.caplock.booking.entity.dao.EventDao;
 import org.springframework.stereotype.Repository;
 
@@ -10,10 +11,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 @Repository
 public class EventRepo implements IEventRepository {
+    private static ReentrantLock lock = new ReentrantLock();
+    private static final ConcurrentHashMap<String, ConcurrentHashMap<String,SeatReserver>> eventsSeat = new ConcurrentHashMap<>();
+    private record SeatReserver(long eventId, String bookingId){}
+
+    public EventRepo() {
+        for(var mock: mockEvents){
+            eventsSeat.put(mock.getTitle(), new ConcurrentHashMap<>());
+        }
+    }
+
     private static final List<EventDao> mockEvents = new ArrayList<>(List.of(
             new EventDao(1L, "Spring Boot Workshop", "Deep dive into MVC", LocalDateTime.now().plusDays(5),
                     "Room 101", 120L, LocalDateTime.now().plusDays(5).withHour(10), LocalDateTime.now().plusDays(5).withHour(12),
@@ -90,5 +103,52 @@ public class EventRepo implements IEventRepository {
     @Override
     public boolean deleteByTitle(String title) {
         return mockEvents.removeIf(event -> event.getTitle().equalsIgnoreCase(title));
+    }
+@Override
+    public boolean assignSeat(long eventId, String eventTitle, String bookingId, String seat){
+        try {
+            lock.lock();
+            if(eventsSeat.get(eventTitle).put(seat, new SeatReserver(eventId,bookingId))==null){
+                return false;
+            }
+        }catch (Exception ex){
+           //log
+        }finally {
+            lock.unlock();
+        }
+        return true;
+    }
+    @Override
+    public boolean unassignSeat(long eventId, String eventTitle, String seat){
+        try {
+            assert seat != null;
+            lock.lock();
+            if(eventsSeat.containsKey(eventTitle) & eventsSeat.get(eventTitle).containsKey(seat)){
+            eventsSeat.get(eventTitle).replace(seat, null);
+//            if( eventsSeat.get(event.getTitle()).get(seat)!=null){
+//                return false;
+//            }
+           }else{
+                return false;
+            }
+        }catch (Exception ex){
+            //log
+        }finally {
+            lock.unlock();
+        }
+        return true;
+    }
+
+    private boolean syncData(){
+        try {
+            lock.lock();
+
+            // sync with database
+        }catch (Exception ex){
+            //log
+        }finally {
+            lock.unlock();
+        }
+        return true;
     }
 }

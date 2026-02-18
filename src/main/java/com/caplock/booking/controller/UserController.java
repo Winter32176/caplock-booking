@@ -1,7 +1,7 @@
 package com.caplock.booking.controller;
 
-import com.caplock.booking.dto.UserCreationDTO;
-import com.caplock.booking.dto.UserDTOMapper;
+import com.caplock.booking.entity.dto.UserCreationDTO;
+import com.caplock.booking.util.UserDTOMapper;
 import com.caplock.booking.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -15,6 +15,8 @@ public class BookingRepo implements IBookingRepository{
             new BookingDao("bk-9901", StatusBookingEnum.Processed, 2, LocalDateTime.now().minusDays(1), null, 1L, 1L),
             new BookingDao("bk-9902", StatusBookingEnum.Fulfilled, 1, LocalDateTime.now().minusDays(2), null, 3L, 2L)
     ));
+
+
     @Override
     public BookingDao getBookingById(long id) {
         var a= mockBookings.stream()
@@ -41,10 +43,10 @@ public class BookingRepo implements IBookingRepository{
     }
 
     @Override
-    public boolean checkBookingExists(BookingDao booking) {
+    public boolean checkBookingExists(String bookingId, long eventId) {
         return mockBookings.stream()
-                .anyMatch(b -> b.getUserId() == booking.getUserId() &&
-                        b.getEventId() == booking.getEventId());
+                .anyMatch(b -> b.getUserId() == bookingId &&
+                        b.getEventId() == eventId);
     }
 
     @Override
