@@ -16,5 +16,5 @@ public interface IBookingService {
 
     Pair<Boolean, String> setNewBooking(BookingDto booking);
 
-    boolean cancelBooking(long bookingId);
+    boolean cancelBooking(String bookingId);
 }

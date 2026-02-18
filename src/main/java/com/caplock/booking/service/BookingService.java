@@ -74,7 +74,7 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public boolean cancelBooking(long bookingId) {
+    public boolean cancelBooking(String bookingId) {
         return bookingRepo.cancelBooking(bookingId);
     }
 }

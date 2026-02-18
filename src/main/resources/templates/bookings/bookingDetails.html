@@ -37,8 +37,8 @@
 
         <div class="actions">
             <!-- Use POST for delete/cancel (HTML forms don’t support DELETE without extra setup) -->
-            <form th:action="@{/bookings/delete/{id}(id=${bookingDetails.bookingDto.id})}" method="post">
-                <button class="btn btn-danger" type="submit">Cancel Booking</button>
+            <form th:action="@{/bookings/details/delete/{id}(id=${bookingDetails.bookingDto.id})}" method="post">
+                <button type="submit">Cancel Booking</button>
             </form>
 
             <a class="btn btn-back" th:href="@{/bookings/Bookings}">Back</a>
