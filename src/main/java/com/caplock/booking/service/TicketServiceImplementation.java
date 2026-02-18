@@ -27,7 +27,7 @@ public class TicketServiceImplementation implements TicketService {
 
         return Response.<List<TicketDTO>>builder()
                 .statusCode(HttpStatus.OK.value())
-                .message("Success!")
+                .message("Success")
                 .data(tickets)
                 .build();
     }

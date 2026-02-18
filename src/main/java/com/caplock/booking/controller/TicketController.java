@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TicketController {
 
-    private final TicketService ticketSerivce;
+    private final TicketService ticketService;
 
     @GetMapping("/")
     public Response<?> findByHolderName(Model model) {
-        return ticketSerivce.findByHolderName("John");
+        return ticketService.findByHolderName("John Doe");
     }
-
 
 }

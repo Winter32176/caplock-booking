@@ -2,7 +2,6 @@ package com.caplock.booking.entity;
 
 import com.caplock.booking.TicketType;
 import jakarta.persistence.*;
-import jdk.jfr.Event;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +17,7 @@ import java.time.LocalDateTime;
 public class Ticket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
@@ -30,34 +29,36 @@ public class Ticket {
     private TicketType ticketType;
 
     // TODO: make it work
-    @ManyToOne
-    @JoinColumn(name = "id")
-    private Event event;
+//    @ManyToOne
+//    @JoinColumn(name = "id")
+    private String event;
 
     private String section;
+    @Column(name = "seat_row")
     private String row;
     private String seatNumber;
 
     private String holderName;
     private String holderEmail;
 
-    // TODO: make it work
-    @ManyToOne
-    @JoinColumn(name = "id")
-    private Booking order;
+    // TODO: make it work - Booking
+//    @ManyToOne
+//    @JoinColumn(name = "id")
+    @Column(name = "ticket_order")
+    private String order;
 
     private BigDecimal price;
     private String currency;
     private String discountCode;
     private LocalDateTime purchasedAt;
 
-    // TODO: make it work
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
+    // TODO: make it work - Payment or PaymentMethod
+//    @Enumerated(EnumType.STRING)
+    private String paymentMethod;
 
-    // TODO: make it work
-    @Enumerated(EnumType.STRING)
-    private TicketStatus status;
+    // TODO: make it work - TicketStatus
+//    @Enumerated(EnumType.STRING)
+    private String status;
 
     private LocalDateTime eventTakesPlaceOn;
     private LocalDateTime entryAt;
