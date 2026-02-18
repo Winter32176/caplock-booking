@@ -3,6 +3,7 @@ package com.caplock.booking.service;
 import com.caplock.booking.entity.dao.BookingDao;
 import com.caplock.booking.entity.dto.BookingDetailsDto;
 import com.caplock.booking.entity.dto.BookingDto;
+import com.caplock.booking.entity.dto.EventDto;
 import com.caplock.booking.repository.IBookingRepository;
 import com.caplock.booking.repository.IEventRepository;
 import com.caplock.booking.util.Mapper;
@@ -23,7 +24,17 @@ public class BookingService implements IBookingService {
 
     @Override
     public BookingDetailsDto getDetails(long id) {
-        return null;
+        BookingDao bookingDao = bookingRepo.getBookingById(id);
+        if (bookingDao == null) return null;
+
+        // Map bookingDao -> BookingDto (flat -> flat)
+        BookingDto bookingDto = Mapper.combine(BookingDto.class,bookingDao);
+
+        // Fetch/map event separately using eventId from booking
+        var eventDao = eventService.getEventById(bookingDao.getEventId());
+        var eventDto = (eventDao == null) ? null : Mapper.combine(EventDto.class, eventDao);
+
+        return new BookingDetailsDto(bookingDto, eventDto);
     }
 
     @Override
@@ -42,6 +53,7 @@ public class BookingService implements IBookingService {
 
     @Override
     public Pair<Boolean, String> setNewBooking(BookingDto bookingDto) {
+        // refactor in different method in eventService for checking seats
         var eventDet = eventService.getDetails(bookingDto.getEventId());
 
         if (eventDet == null) return Pair.with(false, "Event not found");

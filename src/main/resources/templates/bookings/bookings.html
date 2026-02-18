@@ -54,7 +54,7 @@
     </thead>
     <tbody>
     <tr th:each="booking : ${bookings}">
-        <td th:text="${booking.id}"></td>
+        <td th:text="${booking.id}"><a th:href="@{/bookings/details/view/1}">ABC</a></td>
         <td th:text="${booking.userId}"></td>
         <td th:text="${booking.eventTitle}"></td>
 

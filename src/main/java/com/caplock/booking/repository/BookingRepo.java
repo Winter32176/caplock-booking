@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public class BookingRepo implements IBookingRepository{
-    private final List<BookingDao> mockBookings = new ArrayList<>(List.of(
+    private static final List<BookingDao> mockBookings = new ArrayList<>(List.of(
             new BookingDao("bk-9901", StatusBookingEnum.Processed, 2, LocalDateTime.now().minusDays(1), null, 1L, 1L),
             new BookingDao("bk-9902", StatusBookingEnum.Fulfilled, 1, LocalDateTime.now().minusDays(2), null, 3L, 2L)
     ));

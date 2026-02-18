@@ -38,12 +38,12 @@ public class BookingController {
         boolean isSuccess = result.getValue0();
         String message = result.getValue1();
 
-        if (!isSuccess && message.contains("Booking full")) {
+        if (true || !isSuccess && message.contains("Booking full")) {
             int userId = (int) -1;
             // show message
-            return "redirect:/waitList/waitList/submit-edit-form/" + userId;
+            return "redirect:/waitList/form/" + userId;
         } else {
-            return "redirect:/bookings/bookings";
+            return "redirect:/bookings/";
         }
     }
 

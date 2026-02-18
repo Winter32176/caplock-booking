@@ -24,7 +24,10 @@ public class EventService implements IEventService {
 
     @Override
     public EventDetailsDto getDetails(long id) {
-        return null;
+        var dao = eventRepo.getEventById(id);
+        var dto = Mapper.combine(EventDetailsDto.class, dao/**,categoryService.getCategoryByName(name)*/);
+        dto.setEventDto(Mapper.combine(EventDto.class, dao));
+        return dto;
     }
 
     @Override
@@ -37,18 +40,18 @@ public class EventService implements IEventService {
     @Override
     public EventDto getEventById(long id) {
         var dao = eventRepo.getEventById(id);
-        return  Mapper.combine(EventDto.class, dao/**,categoryService.getCategoryByName(name)*/);
+        return Mapper.combine(EventDto.class, dao/**,categoryService.getCategoryByName(name)*/);
     }
 
     @Override
     public boolean setEvent(EventDto dto) {
-        return eventRepo.setEvent( Mapper.splitOne(dto, EventDao.class));
+        return eventRepo.setEvent(Mapper.splitOne(dto, EventDao.class));
     }
 
     @Override
     public boolean updateEvent(long id, EventDto dto) {
         dto.setId(id);
-        return eventRepo.updateEvent(id,Mapper.splitOne(dto, EventDao.class));
+        return eventRepo.updateEvent(id, Mapper.splitOne(dto, EventDao.class));
     }
 
     @Override

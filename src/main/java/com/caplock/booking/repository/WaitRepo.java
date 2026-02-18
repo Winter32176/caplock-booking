@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public class WaitRepo implements IWaitListEntryRepository {
     private static long idCounter = 1;
-    private final List<WaitListEntryDao> mockWaitList = new ArrayList<>(List.of(
+    private static final List<WaitListEntryDao> mockWaitList = new ArrayList<>(List.of(
             new WaitListEntryDao(4, StatusWaitListEnum.Pending, "1", LocalDateTime.now(), 2L, 100L)
     ));
 

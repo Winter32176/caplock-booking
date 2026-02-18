@@ -4,6 +4,7 @@ import com.caplock.booking.entity.dto.BookingDto;
 import com.caplock.booking.entity.dto.EventDto;
 import org.springframework.ui.Model;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.function.LongFunction;
 
 public class FormShower {
@@ -26,11 +27,16 @@ public class FormShower {
             view = "bookings/bookingForm";
         }else{
             noun = "waitList";
-            view = "waitLists/waitListForm";
+            view = "waitList/waitListForm";
         }
+        try {
+            model.addAttribute(noun,dtoClass.getDeclaredConstructor().newInstance());
+            model.addAttribute("formName", editing ? "Edit" : "Add");
+            model.addAttribute("formButton", editing ? "Update" : "Place " + noun);
 
-        model.addAttribute("formName", editing ? "Edit" : "Add");
-        model.addAttribute("formButton", editing ? "Update" : "Place " + noun);
+        }catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e){
+            //log
+        }
 
         return view;
     }

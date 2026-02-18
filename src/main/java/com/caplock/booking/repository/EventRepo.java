@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Repository
 public class EventRepo implements IEventRepository {
-    private final List<EventDao> mockEvents = new ArrayList<>(List.of(
+    private static final List<EventDao> mockEvents = new ArrayList<>(List.of(
             new EventDao(1L, "Spring Boot Workshop", "Deep dive into MVC", LocalDateTime.now().plusDays(5),
                     "Room 101", 120L, LocalDateTime.now().plusDays(5).withHour(10), LocalDateTime.now().plusDays(5).withHour(12),
                     50L, 10L, LocalDateTime.now().plusDays(4), LocalDateTime.now().minusDays(1),
@@ -23,6 +23,10 @@ public class EventRepo implements IEventRepository {
             new EventDao(2L, "Database Design", "SQL vs NoSQL", LocalDateTime.now().plusDays(10),
                     "Room 202", 90L, LocalDateTime.now().plusDays(10).withHour(14), LocalDateTime.now().plusDays(10).withHour(15),
                     30L, 30L, LocalDateTime.now().plusDays(9), LocalDateTime.now().minusDays(2),
+                    LocalDateTime.now(), 1L, StatusEventEnum.Full, 1L),
+            new EventDao(3L, "Database Design", "SQL vs NoSQL", LocalDateTime.now().plusDays(10),
+                    "Room 202", 90L, LocalDateTime.now().plusDays(10).withHour(14), LocalDateTime.now().plusDays(10).withHour(15),
+                    28L, 15L, LocalDateTime.now().plusDays(9), LocalDateTime.now().minusDays(2),
                     LocalDateTime.now(), 1L, StatusEventEnum.Full, 1L)
     ));
 

@@ -10,7 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("events/")
+@RequestMapping("/events")
 public class EventController {
     private final IEventService eventService;
 
@@ -31,9 +31,9 @@ public class EventController {
         return FormShower.showForm(model, safeId, eventService::getEventById, EventDto.class);
     }
 
-    @PostMapping("/submit-form")
+    @PostMapping("/submitForm")
     public String setEvent(@ModelAttribute EventDto event) {
         if (!eventService.setEvent(event)) ;//show error
-        return "redirect:events/Events";
+        return "redirect:/events";
     }
 }
