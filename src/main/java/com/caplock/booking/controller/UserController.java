@@ -18,7 +18,7 @@ public class UserController {
 
     @GetMapping("/")
     public String index() {
-        return "users/index";
+        return "users/users/index";
     }
 
     @GetMapping("/{id}")
@@ -26,20 +26,20 @@ public class UserController {
         model.addAttribute("user", userService.getUserById(id));
 
         // refers to resources/templates/users/index.html
-        return "users/details";
+        return "users/users/details";
     }
 
     @GetMapping("/all")
     public String allUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
         // refers to resources/templates/users/list.html
-        return "users/list";
+        return "users/users/list";
     }
 
     @GetMapping("/create")
     public String createForm(Model model) {
         // refers to resources/templates/users/create.html
-        return "users/create";
+        return "users/users/create";
     }
 
     // @ModelAttribute - binds form data into object model
@@ -52,7 +52,7 @@ public class UserController {
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Integer id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
-        return "users/edit";
+        return "users/users/edit";
     }
 
     // @ModelAttribute - binds form data into object model
