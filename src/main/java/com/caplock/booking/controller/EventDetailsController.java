@@ -44,17 +44,5 @@ public class EventDetailsController {
         );
     }
 
-    @PutMapping("/update/{id}")
-    public String putEvent(@ModelAttribute EventDto event, @PathVariable long id) {
-        // get user id from jwt
 
-
-
-        if (   eventService.updateEvent(id, event))
-            return "redirect:events/events";
-        else {
-            //show error
-            return "redirect:events/eventDetails";
-        }
-    }
 }

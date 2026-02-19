@@ -1,13 +1,10 @@
-// src/main/java/com/caplock/booking/controller/helper/FormShower.java
 package com.caplock.booking.controller.helper;
 
-import com.caplock.booking.entity.dto.BookingFormDto;
 import com.caplock.booking.entity.dto.BookingDto;
-import com.caplock.booking.entity.dto.EventDto;
+import com.caplock.booking.entity.dto.EventDetailsDto;
 import org.springframework.ui.Model;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class FormShower {
@@ -19,9 +16,10 @@ public class FormShower {
             Class<T> dtoClass
     ) {
         boolean editing = false;
-
+        T dto = null;
         if (id > 0 && getByIdLong != null) {
-            editing = getByIdLong.apply(id) != null;
+            dto = getByIdLong.apply(id);
+            editing = dto != null;
         }
 
 
@@ -29,9 +27,10 @@ public class FormShower {
         String attrName;
         String view;
 
-        if (dtoClass == EventDto.class) {
+        if (dtoClass == EventDetailsDto.class) {
             attrName = "event";
             view = "events/eventForm";
+            model.addAttribute("eventDto", editing ? dto : new EventDetailsDto());
         } else if (dtoClass == BookingDto.class) {
             attrName = "booking";
             view = "bookings/bookingForm";
@@ -41,11 +40,10 @@ public class FormShower {
         }
 
         try {
-            T dto;
+
 
             if (editing) {
 
-                dto = getByIdLong.apply(id);
 
                 if (dto == null) {
                     dto = dtoClass.getDeclaredConstructor().newInstance();

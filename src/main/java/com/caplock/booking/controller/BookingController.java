@@ -68,7 +68,7 @@ public class BookingController {
             return "redirect:/waitList/form/" + userId;
         } else if (!isSuccess) {
             // show message
-            return "redirect:/bookings/form/";
+            return "redirect:/bookings/form/" + booking.getEventId() + "/";
         }
 
         return "redirect:/bookings/";

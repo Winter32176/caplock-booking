@@ -25,7 +25,7 @@ public interface IEventService {
 
     Collection<EventDto> getEventsByStatus(StatusEventEnum status);
 
-    boolean setEvent(EventDto dto);
+    boolean setEvent(EventDetailsDto dto);
 
     boolean updateEvent(long id, EventDto dto);
 

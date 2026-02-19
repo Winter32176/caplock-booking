@@ -3,6 +3,7 @@ package com.caplock.booking.controller;
 import com.caplock.booking.controller.helper.FormShower;
 import com.caplock.booking.entity.dto.BookingDto;
 import com.caplock.booking.entity.dto.BookingFormDto;
+import com.caplock.booking.entity.dto.EventDetailsDto;
 import com.caplock.booking.entity.dto.EventDto;
 import com.caplock.booking.service.IEventService;
 import com.caplock.booking.service.IWaitListEntryService;
@@ -32,14 +33,25 @@ public class EventController {
         return FormShower.showForm(
                 model,
                 safeId,
-                eventService::getEventById,
-                EventDto.class
+                eventService::getDetails,
+                EventDetailsDto.class
         );
     }
 
     @PostMapping("/submitForm")
-    public String setEvent(@ModelAttribute EventDto event) {
+    public String setEvent(@ModelAttribute EventDetailsDto event) {
         if (!eventService.setEvent(event)) ;//show error
-        return "redirect:/events";
+        return "redirect:/events/";
+    }
+
+    @PutMapping("/update/{id}")
+    public String putEvent(@ModelAttribute EventDto event, @PathVariable long id) {
+        // get user id from jwt
+        if (   eventService.updateEvent(id, event))
+            return "redirect:events/events/";
+        else {
+            //show error
+            return "redirect:events/eventDetails";
+        }
     }
 }
