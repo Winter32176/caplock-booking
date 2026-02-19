@@ -1,5 +1,6 @@
 package com.caplock.booking.controller;
 
+import com.caplock.booking.dto.CreateTicketDTO;
 import com.caplock.booking.dto.Response;
 import com.caplock.booking.dto.TicketDTO;
 import com.caplock.booking.entity.Ticket;
@@ -40,7 +41,7 @@ public class TicketController {
 
     @ResponseBody
     @PostMapping("/create")
-    public Response<TicketDTO> createTicket(@RequestBody Ticket newTicket) {
+    public Response<TicketDTO> createTicket(@RequestBody CreateTicketDTO newTicket) {
         return ticketService.create(newTicket);
     }
 

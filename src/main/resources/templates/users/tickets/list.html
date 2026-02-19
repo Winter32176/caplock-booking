@@ -73,13 +73,13 @@
 <div class="ticket-list">
     <div class="ticket" th:each="ticket : ${tickets}">
         <div class="ticket-info">
-            <p><strong>Holder</strong> <span th:text="${ticket.holderName}"></span></p>
             <p><strong>Event</strong> <span th:text="${ticket.eventName}"></span></p>
+            <p><strong>Holder</strong> <span th:text="${ticket.holderName}"></span></p>
             <p><strong>Type</strong> <span th:text="${ticket.ticketType}"></span></p>
+            <p><strong>Date</strong> <span th:text="${ticket.date}"></span></p>
             <p><strong>Section</strong> <span th:text="${ticket.section}"></span></p>
             <p><strong>Row</strong> <span th:text="${ticket.row}"></span></p>
             <p><strong>Seat</strong> <span th:text="${ticket.seatNumber}"></span></p>
-            <p><strong>Date</strong> <span th:text="${ticket.date}"></span></p>
             <p><strong>Entry</strong> <span th:text="${ticket.entryAt}"></span></p>
         </div>
         <div class="ticket-qr" th:if="${ticket.qrCode != null}">

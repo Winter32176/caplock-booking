@@ -1,5 +1,6 @@
 package com.caplock.booking.service;
 
+import com.caplock.booking.dto.CreateTicketDTO;
 import com.caplock.booking.dto.Response;
 import com.caplock.booking.dto.TicketDTO;
 
@@ -12,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -56,10 +58,33 @@ public class TicketServiceImplementation implements TicketService {
     }
 
     @Override
-    public Response<TicketDTO> create(Ticket newTicket) {
+    public Response<TicketDTO> create(CreateTicketDTO newTicket) {
         log.info("Creating ticket for holder: {}", newTicket.getHolderName());
 
-        Ticket savedTicket = ticketRepository.save(newTicket);
+        Ticket fullTicketInfo = new Ticket(
+                null,
+                null,
+                null,
+                newTicket.getTicketType(),
+                newTicket.getEvent(),
+                newTicket.getSection(),
+                newTicket.getRow(),
+                newTicket.getSeatNumber(),
+                newTicket.getHolderName(),
+                newTicket.getHolderEmail(),
+                null,
+                null,
+                "USD",
+                newTicket.getDiscountCode(),
+                LocalDateTime.now(),
+                null,
+                "PENDING",
+                null,
+                null,
+                null
+        );
+
+        Ticket savedTicket = ticketRepository.save(fullTicketInfo);
 
         try {
             String qrPath = qrService.generateAndSave(savedTicket.getTicketNumber(), savedTicket.getTicketNumber());

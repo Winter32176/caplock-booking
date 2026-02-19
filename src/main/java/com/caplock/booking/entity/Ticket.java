@@ -3,15 +3,18 @@ package com.caplock.booking.entity;
 import com.caplock.booking.TicketType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
 @Table(name = "tickets")
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Ticket {
@@ -22,6 +25,13 @@ public class Ticket {
 
     @Column(unique = true)
     private String ticketNumber;
+
+    @PrePersist
+    private void generateTicketNumber() {
+        if (this.ticketNumber == null) {
+            this.ticketNumber = UUID.randomUUID().toString();
+        }
+    }
 
     private String qrCode;
 
