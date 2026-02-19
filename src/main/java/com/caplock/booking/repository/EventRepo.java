@@ -155,12 +155,13 @@ public class EventRepo implements IEventRepository {
         var seatMap = eventsSeat.get(event.getTitle());
         if (seatMap == null) return List.of();
 
-        return seatMap.entrySet()
+        var a = seatMap.entrySet()
                 .stream()
                 .filter(e -> e.getValue().bookingId != null && e.getValue().bookingId.equals(bookId))
                 .map(java.util.Map.Entry::getKey)
                 .sorted()
                 .toList();
+        return a;
     }
 
     @Override

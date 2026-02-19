@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Service
 public class BookingService implements IBookingService {
@@ -69,7 +70,7 @@ public class BookingService implements IBookingService {
                     var event = eventService.getEventById(dao.getEventId());
 
                     BookingDto dto = Mapper.combine(BookingDto.class, dao, event);
-                    dto.setSeats(eventService.getSeatsFreeForEvent(dao.getEventId())); // если нужно свободные места/занятые — см. ниже
+                    dto.setSeats(eventService.getBookingSeatsForEvent(event.getId(), dao.getId()));
                     return dto;
                 })
                 .toList();
@@ -80,7 +81,7 @@ public class BookingService implements IBookingService {
         bookingFormDto.setBookingId(bookingRepo.genBookingId());
         var val = seatReservationService.assignSeats(bookingFormDto.getBookingId(), bookingFormDto.getEventId(), bookingFormDto.getSeats());
         if (!val.getValue0()) return val;
-        BookingDao dao = Mapper.splitOne(bookingFormDto, BookingDao.class);
+        BookingDao dao = Mapper.splitOne(bookingFormDto, BookingDao.class,   Map.of("bookingId", "id"));
         boolean success = bookingRepo.setNewBooking(dao);
         return Pair.with(success, success ? "Success" : "Error");
     }

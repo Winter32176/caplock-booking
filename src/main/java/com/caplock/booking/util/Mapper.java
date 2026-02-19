@@ -157,10 +157,48 @@ public class Mapper {
         }
     }
 
-    public static <T> T splitOne(Object source, Class<T> targetClass) {
-        T target = newInstance(targetClass);
-        if (source != null) copyInto(source, target);
-        return target;
+    public static <T> T splitOne(Object source, Class<T> targetClass, Map<String, String> aliases) {
+        try {
+            T target = targetClass.getDeclaredConstructor().newInstance();
+            copyPropertiesWithAliases(source, target, aliases);
+            return target;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void copyPropertiesWithAliases(Object source, Object target, Map<String, String> aliases) {
+        Map<String, Field> targetFields = allFieldsByName(target.getClass());
+
+        for (Field sf : allFields(source.getClass())) {
+            if (Modifier.isStatic(sf.getModifiers())) continue;
+
+            String targetName = aliases.getOrDefault(sf.getName(), sf.getName());
+            Field tf = targetFields.get(targetName);
+            if (tf == null || Modifier.isStatic(tf.getModifiers()) || Modifier.isFinal(tf.getModifiers())) continue;
+
+            try {
+                sf.setAccessible(true);
+                Object value = sf.get(source);
+
+                tf.setAccessible(true);
+
+                if (value == null) {
+                    if (!tf.getType().isPrimitive()) tf.set(target, null);
+                    continue;
+                }
+
+                Class<?> targetType = boxed(tf.getType());
+                if (targetType.isAssignableFrom(value.getClass())) {
+                    tf.set(target, value);
+                } else if (value instanceof Number n && Number.class.isAssignableFrom(targetType)) {
+                    Object converted = convertNumber(n, targetType);
+                    if (converted != null) tf.set(target, converted);
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
 
