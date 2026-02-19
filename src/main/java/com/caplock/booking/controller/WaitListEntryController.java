@@ -21,7 +21,12 @@ public class WaitListEntryController {
     @GetMapping({"/form", "/form/{id}"})
     public String form(Model model, @PathVariable(required = false) Long id) {
         long safeId = (id == null) ? -1 : id;
-        return FormShower.showForm(model, safeId, waitListEntryService::getAllWaitListById, WaitListEntryDto.class);
+        return FormShower.showForm(
+                model,
+                safeId,
+                waitListEntryService::getAllWaitListById,
+                WaitListEntryDto.class
+        );
     }
 
     @GetMapping("/{id}")

@@ -36,20 +36,13 @@ public class EventDetailsController {
     @GetMapping({"/form", "/form/{id}"})
     public String form(Model model, @PathVariable(required = false) Long id) {
         long safeId = (id == null) ? -1 : id;
-        return FormShower.showForm(model, safeId, eventService::getEventById, EventDto.class);
+        return FormShower.showForm(
+                model,
+                safeId,
+                eventService::getEventById,
+                EventDto.class
+        );
     }
 
-    @PutMapping("/update/{id}")
-    public String putEvent(@ModelAttribute EventDto event, @PathVariable long id) {
-        // get user id from jwt
 
-
-
-        if (   eventService.updateEvent(id, event))
-            return "redirect:events/events";
-        else {
-            //show error
-            return "redirect:events/eventDetails";
-        }
-    }
 }

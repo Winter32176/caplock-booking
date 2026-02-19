@@ -5,6 +5,7 @@ import com.caplock.booking.entity.dto.*;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 public interface IEventService {
 
@@ -24,7 +25,7 @@ public interface IEventService {
 
     Collection<EventDto> getEventsByStatus(StatusEventEnum status);
 
-    boolean setEvent(EventDto dto);
+    boolean setEvent(EventDetailsDto dto);
 
     boolean updateEvent(long id, EventDto dto);
 
@@ -32,4 +33,9 @@ public interface IEventService {
 
     boolean deleteByTitle(String title);
 
+    boolean unassignSeat(long eventId, String bookId);
+
+    boolean assignSeat(long eventId, String bookingId, String seat);
+
+    List<String> getSeatsForEvent(long eventId);
 }

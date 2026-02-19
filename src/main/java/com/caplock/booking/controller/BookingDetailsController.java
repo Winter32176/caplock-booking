@@ -17,7 +17,7 @@ public class BookingDetailsController {
     }
 
     @GetMapping("/view/{id}")
-    public String getDetails(@PathVariable long id, Model model) {
+    public String getDetails(@PathVariable String id, Model model) {
         var a=bookingService.getDetails(id);
         model.addAttribute("bookingDetails",a );
         return "bookings/bookingDetails";

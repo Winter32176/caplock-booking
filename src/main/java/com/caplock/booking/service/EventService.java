@@ -44,8 +44,9 @@ public class EventService implements IEventService {
     }
 
     @Override
-    public boolean setEvent(EventDto dto) {
-        return eventRepo.setEvent(Mapper.splitOne(dto, EventDao.class));
+    public boolean setEvent(EventDetailsDto dto) {
+        var a=eventRepo.setEvent(Mapper.combine(EventDao.class, dto));
+        return a;
     }
 
     @Override
@@ -90,5 +91,21 @@ public class EventService implements IEventService {
     @Override
     public boolean deleteByTitle(String title) {
         return false;
+    }
+
+    @Override
+    public boolean unassignSeat(long eventId, String bookId) {
+        return eventRepo.unAssignSeat(eventId, getEventById(eventId).getTitle(), bookId);
+    }
+
+    @Override
+    public boolean assignSeat(long eventId, String bookingId, String seat) {
+
+        return eventRepo.assignSeat(eventId, getEventById(eventId).getTitle(), bookingId, seat);
+    }
+
+    @Override
+    public List<String> getSeatsForEvent(long eventId) {
+        return eventRepo.getSeatsForEvent(eventId);
     }
 }

@@ -1,6 +1,8 @@
-package com.caplock.booking.dto;
+package com.caplock.booking.util;
 
-import com.caplock.booking.entity.User;
+import com.caplock.booking.entity.object.User;
+import com.caplock.booking.entity.dto.UserDTO;
+import org.springframework.context.annotation.Bean;
 
 import java.util.function.Function;
 

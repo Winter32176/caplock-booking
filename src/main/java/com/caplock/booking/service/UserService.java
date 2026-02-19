@@ -1,10 +1,11 @@
 package com.caplock.booking.service;
 
-import com.caplock.booking.dto.UserCreationDTO;
-import com.caplock.booking.dto.UserDTO;
-import com.caplock.booking.dto.UserDTOMapper;
-import com.caplock.booking.entity.User;
+import com.caplock.booking.entity.dto.UserCreationDTO;
+import com.caplock.booking.entity.dto.UserDTO;
+import com.caplock.booking.util.UserDTOMapper;
+import com.caplock.booking.entity.object.User;
 import com.caplock.booking.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
