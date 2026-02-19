@@ -37,7 +37,7 @@ public class BookingService implements IBookingService {
 
         var form = Mapper.combine(BookingFormDto.class, eventDto, bookingDto);
         assert eventDto != null;
-        form.setSeats(eventService.getSeatsForEvent(eventDto.getId()));
+        form.setSeats(eventService.getBookingSeatsForEvent(eventDto.getId(), bookingDao.getId()));
         return form;
     }
 
@@ -64,10 +64,15 @@ public class BookingService implements IBookingService {
 
     @Override
     public Collection<BookingDto> getAllUserBookings(long userId) {
-        var list = bookingRepo.getAllUserBookings(userId).stream()
-                .map(dao -> Mapper.combine(BookingDto.class, dao, eventService.getEventById(dao.getEventId())))
+        return bookingRepo.getAllUserBookings(userId).stream()
+                .map(dao -> {
+                    var event = eventService.getEventById(dao.getEventId());
+
+                    BookingDto dto = Mapper.combine(BookingDto.class, dao, event);
+                    dto.setSeats(eventService.getSeatsFreeForEvent(dao.getEventId())); // если нужно свободные места/занятые — см. ниже
+                    return dto;
+                })
                 .toList();
-        return list;
     }
 
     @Override
@@ -83,6 +88,7 @@ public class BookingService implements IBookingService {
     @Override
     public boolean cancelBooking(String bookingId) {
         var b= bookingRepo.getBookingById(bookingId);
+        assert b != null;
         var val = seatReservationService.clearReservationOfSeats(b.getId(), b.getEventId());
         if (!val) return val;
         return bookingRepo.cancelBooking(bookingId);

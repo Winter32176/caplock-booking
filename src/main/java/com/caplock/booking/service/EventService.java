@@ -105,7 +105,13 @@ public class EventService implements IEventService {
     }
 
     @Override
-    public List<String> getSeatsForEvent(long eventId) {
+    public List<String> getSeatsFreeForEvent(long eventId) {
         return eventRepo.getSeatsForEvent(eventId);
     }
+
+    @Override
+    public List<String> getBookingSeatsForEvent(long eventId, String bookId) {
+        return List.of();
+    }
+
 }

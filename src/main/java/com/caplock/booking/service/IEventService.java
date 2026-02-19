@@ -37,5 +37,8 @@ public interface IEventService {
 
     boolean assignSeat(long eventId, String bookingId, String seat);
 
-    List<String> getSeatsForEvent(long eventId);
+    List<String> getSeatsFreeForEvent(long eventId);
+
+    List<String> getBookingSeatsForEvent(long eventId, String bookId);
 }
+
