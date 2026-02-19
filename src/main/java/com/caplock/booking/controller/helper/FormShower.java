@@ -1,10 +1,13 @@
+// src/main/java/com/caplock/booking/controller/helper/FormShower.java
 package com.caplock.booking.controller.helper;
 
+import com.caplock.booking.entity.dto.BookingFormDto;
 import com.caplock.booking.entity.dto.BookingDto;
 import com.caplock.booking.entity.dto.EventDto;
 import org.springframework.ui.Model;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class FormShower {
@@ -12,39 +15,52 @@ public class FormShower {
     public static <T> String showForm(
             Model model,
             long id,
-            String strId,
             Function<Long, T> getByIdLong,
-            Function<String, T> getByIdString,
             Class<T> dtoClass
     ) {
-        boolean editing;
-        if (strId == null) {
-            editing = (id > 0) && getByIdLong.apply(id) != null;
-        }else{
-            editing = getByIdString.apply(strId) != null;
+        boolean editing = false;
+
+        if (id > 0 && getByIdLong != null) {
+            editing = getByIdLong.apply(id) != null;
         }
 
 
-        String noun;
+        // Decide view + model attribute name based on dto class
+        String attrName;
         String view;
+
         if (dtoClass == EventDto.class) {
-            noun = "event";
+            attrName = "event";
             view = "events/eventForm";
         } else if (dtoClass == BookingDto.class) {
-            noun = "booking";
+            attrName = "booking";
             view = "bookings/bookingForm";
         } else {
-            noun = "waitList";
+            attrName = "waitList";
             view = "waitList/waitListForm";
         }
+
         try {
-            model.addAttribute(noun, dtoClass.getDeclaredConstructor().newInstance());
+            T dto;
+
+            if (editing) {
+
+                dto = getByIdLong.apply(id);
+
+                if (dto == null) {
+                    dto = dtoClass.getDeclaredConstructor().newInstance();
+                }
+            } else {
+                dto = dtoClass.getDeclaredConstructor().newInstance();
+            }
+
+            model.addAttribute(attrName, dto);
             model.addAttribute("formName", editing ? "Edit" : "Add");
-            model.addAttribute("formButton", editing ? "Update" : "Place " + noun);
+            model.addAttribute("formButton", editing ? "Update" : "Place " + attrName);
 
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException e) {
-            //log
+            throw new RuntimeException("Failed to prepare form DTO for " + dtoClass.getSimpleName(), e);
         }
 
         return view;

@@ -2,6 +2,7 @@ package com.caplock.booking.controller;
 
 import com.caplock.booking.controller.helper.FormShower;
 import com.caplock.booking.entity.dto.BookingDto;
+import com.caplock.booking.entity.dto.BookingFormDto;
 import com.caplock.booking.entity.dto.EventDto;
 import com.caplock.booking.service.IEventService;
 import com.caplock.booking.service.IWaitListEntryService;
@@ -18,7 +19,7 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public String getAllEvents(Model model) {
         model.addAttribute("eventList", eventService.getAllEvents());
         return "events/Events";
@@ -28,7 +29,12 @@ public class EventController {
     @GetMapping({"/form", "/form/{id}"})
     public String form(Model model, @PathVariable(required = false) Long id) {
         long safeId = (id == null) ? -1 : id;
-        return FormShower.showForm(model, safeId, null, eventService::getEventById, null, EventDto.class);
+        return FormShower.showForm(
+                model,
+                safeId,
+                eventService::getEventById,
+                EventDto.class
+        );
     }
 
     @PostMapping("/submitForm")

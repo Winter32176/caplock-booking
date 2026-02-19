@@ -22,7 +22,11 @@ public class EventRepo implements IEventRepository {
 
     public EventRepo() {
         for (var mock : mockEvents) {
-            eventsSeat.put(mock.getTitle(), new ConcurrentHashMap<>());
+            var seatMap = new ConcurrentHashMap<String, SeatReserver>();
+            for (int i = 0; i < mock.getCapacity(); i++) {
+                seatMap.put(i % 2 == 0 ? ("A" + i) : ("B" + i), new SeatReserver(-1, null));
+            }
+            eventsSeat.put(mock.getTitle(), seatMap);
         }
     }
 
@@ -120,6 +124,26 @@ public class EventRepo implements IEventRepository {
     }
 
     @Override
+    public List<String> getSeatsForEvent(long eventId) {
+        var event = mockEvents.stream()
+                .filter(e -> e.getId() == eventId)
+                .findFirst()
+                .orElse(null);
+
+        if (event == null) return List.of();
+
+        var seatMap = eventsSeat.get(event.getTitle());
+        if (seatMap == null) return List.of();
+
+        return seatMap.entrySet()
+                .stream()
+                .filter(e -> e.getValue().bookingId == null)
+                .map(java.util.Map.Entry::getKey)
+                .sorted()
+                .toList();
+    }
+
+    @Override
     public boolean unAssignSeat(long eventId, String eventTitle, String bookId) {
         if (eventsSeat.containsKey(eventTitle)) {
             var seatMap = (ConcurrentHashMap<String, SeatReserver>) eventsSeat.get(eventTitle);
@@ -137,9 +161,6 @@ public class EventRepo implements IEventRepository {
                         return false;
                     }
                 }
-//            if( eventsSeat.get(event.getTitle()).get(seat)!=null){
-//                return false;
-//            }
 
             } catch (Exception ex) {
                 //log

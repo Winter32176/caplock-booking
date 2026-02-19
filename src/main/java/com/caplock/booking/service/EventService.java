@@ -102,4 +102,9 @@ public class EventService implements IEventService {
 
         return eventRepo.assignSeat(eventId, getEventById(eventId).getTitle(), bookingId, seat);
     }
+
+    @Override
+    public List<String> getSeatsForEvent(long eventId) {
+        return eventRepo.getSeatsForEvent(eventId);
+    }
 }

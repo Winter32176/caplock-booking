@@ -2,7 +2,9 @@ package com.caplock.booking.controller;
 
 import com.caplock.booking.controller.helper.FormShower;
 import com.caplock.booking.entity.dto.BookingDto;
+import com.caplock.booking.entity.dto.BookingFormDto;
 import com.caplock.booking.service.IBookingService;
+import com.caplock.booking.service.IEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.*;
@@ -19,9 +21,12 @@ public class BookingController {
     Random random = new Random();
     @Autowired
     private final IBookingService bookingService;
+    @Autowired
+    private final IEventService eventService;
 
-    public BookingController(IBookingService iBookingService) {
+    public BookingController(IBookingService iBookingService, IEventService iEventService) {
         this.bookingService = iBookingService;
+        this.eventService = iEventService;
     }
 
     @GetMapping("/")
@@ -32,19 +37,26 @@ public class BookingController {
         return "bookings/bookings";
     }
 
-    @GetMapping({"/form", "/form/{id}"})
-    public String form(Model model, @PathVariable(required = false) String id) {
-        return FormShower.showForm(model, -1, id,null ,bookingService::getBookingById, BookingDto.class);
+    @GetMapping({"/form/{eventId}/", "form/{eventId}/{id}"})
+    public String form(Model model, @PathVariable long eventId, @PathVariable(required = false) String id) {
+        long userId = 48;
+        boolean editing = id != null;
+        var val = bookingService.getBookingFormById(id, userId);
+        var form = val == null ? new BookingFormDto() : val;
+
+        form.setEventId(eventId);
+        form.setUserId(userId);
+
+        var seats = eventService.getSeatsForEvent(eventId);
+        model.addAttribute("availableSeats", seats);
+        model.addAttribute("bookingForm", form);
+        model.addAttribute("formName", editing ? "Edit" : "Add");
+        model.addAttribute("formButton", editing ? "Update" : "Place " + "bookingForm");
+        return "bookings/bookingForm";
     }
 
     @PostMapping("/submitForm")
-    public String setBooking(@ModelAttribute("booking") BookingDto booking) {
-        var a = new ArrayList<String>() {
-        };
-        a.add("1");
-        a.add("2");
-        a.add("3");
-        booking.setSeats(a);
+    public String setBooking(@ModelAttribute("bookingForm") BookingFormDto booking) {
         var result = bookingService.setNewBooking(booking);
 
         boolean isSuccess = result.getValue0();

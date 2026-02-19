@@ -3,6 +3,7 @@ package com.caplock.booking.service;
 import com.caplock.booking.entity.dao.BookingDao;
 import com.caplock.booking.entity.dto.BookingDetailsDto;
 import com.caplock.booking.entity.dto.BookingDto;
+import com.caplock.booking.entity.dto.BookingFormDto;
 import com.caplock.booking.entity.dto.EventDto;
 import com.caplock.booking.repository.IBookingRepository;
 import com.caplock.booking.util.Mapper;
@@ -21,6 +22,24 @@ public class BookingService implements IBookingService {
     private IEventService eventService;
     @Autowired
     private ISeatReservationService seatReservationService;
+
+    @Override
+    public BookingFormDto getBookingFormById(String id, long userId) {
+        BookingDao bookingDao = bookingRepo.getBookingById(id);
+        if (bookingDao == null) return null;
+
+        // Map bookingDao -> BookingDto (flat -> flat)
+        BookingDto bookingDto = Mapper.combine(BookingDto.class, bookingDao);
+
+        // Fetch/map event separately using eventId from booking
+        var eventDao = eventService.getEventById(bookingDao.getEventId());
+        var eventDto = (eventDao == null) ? null : Mapper.combine(EventDto.class, eventDao);
+
+        var form = Mapper.combine(BookingFormDto.class, eventDto, bookingDto);
+        assert eventDto != null;
+        form.setSeats(eventService.getSeatsForEvent(eventDto.getId()));
+        return form;
+    }
 
     @Override
     public BookingDetailsDto getDetails(String id) {
@@ -52,11 +71,11 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public Pair<Boolean, String> setNewBooking(BookingDto bookingDto) {
-        bookingDto.setId(bookingRepo.genBookingId());
-        var val = seatReservationService.assignSeats(bookingDto.getId(), bookingDto.getEventId(), bookingDto.getSeats());
+    public Pair<Boolean, String> setNewBooking(BookingFormDto bookingFormDto) {
+        bookingFormDto.setBookingId(bookingRepo.genBookingId());
+        var val = seatReservationService.assignSeats(bookingFormDto.getBookingId(), bookingFormDto.getEventId(), bookingFormDto.getSeats());
         if (!val.getValue0()) return val;
-        BookingDao dao = Mapper.splitOne(bookingDto, BookingDao.class);
+        BookingDao dao = Mapper.splitOne(bookingFormDto, BookingDao.class);
         boolean success = bookingRepo.setNewBooking(dao);
         return Pair.with(success, success ? "Success" : "Error");
     }

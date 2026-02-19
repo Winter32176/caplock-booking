@@ -5,6 +5,7 @@ import com.caplock.booking.entity.dto.*;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 public interface IEventService {
 
@@ -35,4 +36,6 @@ public interface IEventService {
     boolean unassignSeat(long eventId, String bookId);
 
     boolean assignSeat(long eventId, String bookingId, String seat);
+
+    List<String> getSeatsForEvent(long eventId);
 }

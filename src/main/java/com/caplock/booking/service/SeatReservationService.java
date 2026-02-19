@@ -19,7 +19,7 @@ public class SeatReservationService implements ISeatReservationService {
     }
 
     @Override
-    public Pair<Boolean, String> assignSeats(String bookId, long eventId,List<String> seats) {
+    public Pair<Boolean, String> assignSeats(String bookId, long eventId, List<String> seats) {
         var eventDet = eventService.getDetails(eventId);
 
         if (eventDet == null) return Pair.with(false, "Event not found");
@@ -31,13 +31,13 @@ public class SeatReservationService implements ISeatReservationService {
         }
 
         boolean bookedSeats = false;
-        for (int i = 0; i < seats.size(); i++) {
-            if (eventService.assignSeat(eventId, bookId, seats.get(i))) {
+        for (String seat : seats) {
+            if (!eventService.assignSeat(eventId, bookId, seat)) {
                 bookedSeats = true;
                 break;
             }
         }
-        if (bookedSeats || seats.size() < 1)
+        if (bookedSeats || seats.isEmpty())
             return Pair.with(false, "Some seat is reserved");
 
 
