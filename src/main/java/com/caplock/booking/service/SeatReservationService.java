@@ -46,9 +46,7 @@ public class SeatReservationService implements ISeatReservationService {
 
     @Override
     public boolean clearReservationOfSeats(String bookId, long eventId) {
-        boolean fail = false;
-        if (eventService.unassignSeat(eventId, bookId))
-            fail = true;
+        boolean fail = !eventService.unassignSeat(eventId, bookId);
 
         return !fail;
     }
