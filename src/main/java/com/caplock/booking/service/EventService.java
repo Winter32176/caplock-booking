@@ -1,12 +1,13 @@
 package com.caplock.booking.service;
 
 import com.caplock.booking.entity.dto.EventDto;
+import org.javatuples.Triplet;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface EventService {
-    EventDto create(EventDto dto);
+    Triplet<Optional<EventDto>, Boolean, String> create(EventDto dto);
 
     Optional<EventDto> getById(Long id);
 

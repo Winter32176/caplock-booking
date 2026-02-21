@@ -4,6 +4,9 @@ import com.caplock.booking.entity.dto.BookingDto;
 import com.caplock.booking.entity.dao.BookingEntity;
 import com.caplock.booking.repository.BookingRepository;
 import com.caplock.booking.service.BookingService;
+import com.caplock.booking.service.InvoiceService;
+import com.caplock.booking.service.PaymentService;
+import com.caplock.booking.service.TicketService;
 import com.caplock.booking.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
+    private final InvoiceService invoiceService;
+    private final PaymentService paymentService;
+    private final TicketService ticketService;
+
+
 
     @Override
     public BookingDto create(BookingDto dto) {

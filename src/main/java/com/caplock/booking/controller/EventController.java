@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/api/events")
@@ -17,7 +18,10 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<EventDto> create(@RequestBody EventDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(eventService.create(dto));
+        return eventService.create(dto).getValue0()
+                .map(event -> ResponseEntity.status(HttpStatus.CREATED).body(event))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+
     }
 
     @GetMapping("/{id}")
