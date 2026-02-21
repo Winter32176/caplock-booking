@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Service("legacyPaymentServiceImpl")
 public class PaymentServiceImpl implements IPaymentService {
     private final IPaymentRepository repository;
     private final InvoiceServiceImpl invoiceServiceImpl;

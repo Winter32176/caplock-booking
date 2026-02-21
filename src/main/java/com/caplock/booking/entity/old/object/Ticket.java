@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "tickets")
+@Table(name = "tickets_legacy")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
