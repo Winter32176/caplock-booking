@@ -1,5 +1,6 @@
 package com.caplock.booking.controller;
 
+import com.caplock.booking.entity.dto.CreateTicketDTO;
 import com.caplock.booking.entity.dto.TicketDto;
 import com.caplock.booking.service.TicketService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class TicketController {
     private final TicketService ticketService;
 
     @PostMapping
-    public ResponseEntity<TicketDto> create(@RequestBody TicketDto dto) {
+    public ResponseEntity<TicketDto> create(@RequestBody CreateTicketDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.create(dto));
     }
 
@@ -29,7 +30,7 @@ public class TicketController {
 
     @GetMapping
     public List<TicketDto> getAll() {
-        return ticketService.getAll();
+        return ticketService.findAll();
     }
 
     @PutMapping("/{id}")
@@ -39,7 +40,7 @@ public class TicketController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        ticketService.delete(id);
+        ticketService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

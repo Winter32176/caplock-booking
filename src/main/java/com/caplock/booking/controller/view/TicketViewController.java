@@ -1,5 +1,6 @@
 package com.caplock.booking.controller.view;
 
+import com.caplock.booking.entity.dto.CreateTicketDTO;
 import com.caplock.booking.entity.dto.TicketDto;
 import com.caplock.booking.service.TicketService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class TicketViewController {
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("items", ticketService.getAll());
+        model.addAttribute("items", ticketService.findAll());
         return "ui/tickets/list";
     }
 
@@ -27,7 +28,7 @@ public class TicketViewController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute("item") TicketDto dto) {
+    public String create(@ModelAttribute("item") CreateTicketDTO dto) {
         ticketService.create(dto);
         return "redirect:/ui/tickets";
     }
@@ -48,7 +49,7 @@ public class TicketViewController {
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
-        ticketService.delete(id);
+        ticketService.deleteById(id);
         return "redirect:/ui/tickets";
     }
 }

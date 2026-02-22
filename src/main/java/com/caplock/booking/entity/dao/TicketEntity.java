@@ -2,20 +2,12 @@ package com.caplock.booking.entity.dao;
 
 import com.caplock.booking.entity.StatusTicketEnum;
 import com.caplock.booking.entity.TicketType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tickets")
@@ -27,6 +19,18 @@ public class TicketEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true)
+    private String ticketNumber;
+
+    @PrePersist
+    private void generateTicketNumber() {
+        if (this.ticketNumber == null) {
+            this.ticketNumber = UUID.randomUUID().toString();
+        }
+    }
+
+    private String qrCode;
 
     @Column(name = "booking_id")
     private Long bookingId;
@@ -45,6 +49,8 @@ public class TicketEntity {
     private String ticketCode;
 
     private String section;
+
+    @Column(name = "seat_row")
     private String row;
 
     @Column(name = "seat_number")

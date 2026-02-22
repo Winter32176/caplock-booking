@@ -1,6 +1,6 @@
 package com.caplock.booking.controller.old;
 
-import com.caplock.booking.service.old.QrService;
+import com.caplock.booking.service.impl.QrService;
 import com.google.zxing.WriterException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

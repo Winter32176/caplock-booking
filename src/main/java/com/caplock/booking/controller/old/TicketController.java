@@ -1,10 +1,7 @@
 package com.caplock.booking.controller.old;
 
-import com.caplock.booking.entity.old.dto.CreateTicketDTO;
-import com.caplock.booking.entity.old.dto.TicketDTO;
-import com.caplock.booking.entity.old.dto.Response;
-import com.caplock.booking.entity.old.object.Ticket;
-import com.caplock.booking.service.old.TicketService;
+import com.caplock.booking.entity.dto.TicketDto;
+import com.caplock.booking.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
@@ -21,7 +18,7 @@ public class TicketController {
 
     @GetMapping("/")
     public String findAll(Model model) {
-        List<TicketDTO> tickets = ticketService.findAll().getData();
+        List<TicketDto> tickets = ticketService.getAll();
 
         model.addAttribute("tickets", tickets);
 
@@ -30,7 +27,7 @@ public class TicketController {
 
     @ResponseBody
     @GetMapping("/{holderName}")
-    public Response<?> findByHolderName(@PathVariable String holderName) {
+    public List<TicketDto> findByHolderName(@PathVariable String holderName) {
         return ticketService.findByHolderName(holderName);
     }
 
@@ -41,7 +38,7 @@ public class TicketController {
 
     @ResponseBody
     @PostMapping("/create")
-    public Response<TicketDTO> createTicket(@RequestBody CreateTicketDTO newTicket) {
+    public TicketDto createTicket(@RequestBody TicketDto newTicket) {
         return ticketService.create(newTicket);
     }
 
@@ -52,14 +49,14 @@ public class TicketController {
 
     @ResponseBody
     @PutMapping("/edit/{id}")
-    public Response<?> editTicket(@PathVariable Long id, @RequestBody Ticket updatedTicket) {
+    public TicketDto editTicket(@PathVariable Long id, @RequestBody TicketDto updatedTicket) {
         return ticketService.update(id, updatedTicket);
     }
 
     @ResponseBody
     @DeleteMapping("/{id}")
-    public Response<?> deleteTicket(@PathVariable Long id) {
-        return ticketService.deleteById(id);
+    public void deleteTicket(@PathVariable Long id) {
+        ticketService.delete(id);
     }
 
 }
