@@ -22,13 +22,13 @@ public interface SeatReservationService {
     /*
      * private
      */
-    Pair<Boolean, String> assignSeatsTemp(long eventId, List<Pair<String, TicketType>> seats, String bookingId);
+    Pair<Boolean, String> assignSeatsTemp(long eventId, List<Pair<String, TicketType>> seats, long bookingId);
 
     boolean clearReservationOfSeats(long eventId, long bookingId);
 
 
     List<Pair<String, TicketType>> getFreeSeatsForEvent(long eventId);
 
-    record SeatReserver(long eventId, String bookingId, TicketType seatType) {
+    record SeatReserver(long eventId, long bookingId, TicketType seatType) {
     }
 }

@@ -4,8 +4,10 @@ import com.caplock.booking.service.InvoiceService;
 import com.caplock.booking.entity.dao.InvoiceEntity;
 import com.caplock.booking.entity.dto.InvoiceDto;
 import com.caplock.booking.repository.InvoiceRepository;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.javatuples.Pair;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -59,9 +61,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDto generateInvoice(Long bookingId, BigDecimal amount) {
+    public InvoiceDto generateInvoice(long invoiceId) {
+        var invoice = getById(invoiceId).orElseThrow(() -> new RuntimeException("Invoice not found"));
         try {
-            String invoiceNumber = "INV-" + UUID.randomUUID().toString().substring(0, 8);
+            if (invoice.getInvoiceNumber() == null)
+                invoice.setInvoiceNumber(getInvoiceNumber());
             LocalDateTime now = LocalDateTime.now();
 
             String lineSeparator = System.lineSeparator();
@@ -70,13 +74,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             contentBuilder.append("===== CAPLOCK BOOKING INVOICE =====")
                     .append(lineSeparator)
-                    .append("Invoice Number: ").append(invoiceNumber)
+                    .append("Invoice Number: ").append(invoice.getInvoiceNumber())
                     .append(lineSeparator)
-                    .append("Booking ID: ").append(bookingId)
+                    .append("Booking ID: ").append(invoice.getBookingId())
                     .append(lineSeparator)
-                    .append("Amount: ").append(amount)
+                    .append("Amount: ").append(invoice.getTotalAmount())
                     .append(lineSeparator)
-                    .append("Date: ").append(now)
+                    .append("Date: ").append(invoice.getIssuedAt())
                     .append(lineSeparator)
                     .append("====================================");
 
@@ -87,24 +91,42 @@ public class InvoiceServiceImpl implements InvoiceService {
                 var ignore = dir.mkdirs();
             }
 
-            String filePath = "invoices/" + invoiceNumber + ".txt";
+            String filePath = "invoices/" + invoice.getInvoiceNumber() + ".txt";
             try (FileWriter writer = new FileWriter(filePath)) {
                 writer.write(content);
             }
 
             InvoiceEntity dao = new InvoiceEntity();
-            dao.setBookingId(bookingId);
-            dao.setTotalAmount(amount);
-            dao.setInvoiceNumber(invoiceNumber);
-            dao.setIssuedAt(now);
+            dao.setBookingId(invoice.getBookingId());
+            dao.setTotalAmount(invoice.getTotalAmount());
+            dao.setInvoiceNumber(invoice.getInvoiceNumber());
+            dao.setIssuedAt(invoice.getIssuedAt());
             dao.setPdfUrl(filePath);
 
             InvoiceEntity saved = repository.save(dao);
             return modelMapper.map(saved, InvoiceDto.class);
 
         } catch (IOException e) {
+            log.info("IOException in invoice generation: {}", e.getMessage());
             throw new RuntimeException("Invoice generation failed", e);
         }
+    }
+
+    @Nonnull
+    private static String getInvoiceNumber() {
+        String invoiceNumber = "INV-" + UUID.randomUUID().toString().substring(0, 8);
+        return invoiceNumber;
+    }
+
+    @Override
+    @Deprecated
+    public Pair<Long, String> getNewInvoiceNumberAndId() {
+        return Pair.with(getAll().stream().sorted().toList().getFirst().getId() + 1, getInvoiceNumber());
+    }
+
+    @Override
+    public String getNewInvoiceNumber() {
+        return  getInvoiceNumber();
     }
 
 }

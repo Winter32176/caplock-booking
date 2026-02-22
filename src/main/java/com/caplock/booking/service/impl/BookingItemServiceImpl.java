@@ -33,6 +33,14 @@ public class BookingItemServiceImpl implements BookingItemService {
     }
 
     @Override
+    public List<BookingItemDto> getAllByBookingId(long bookingId) {
+        return bookingItemRepository.findByBookingId(bookingId)
+                .stream()
+                .map(Mapper::toDto)
+                .toList();
+    }
+
+    @Override
     public BookingItemDto update(Long id, BookingItemDto dto) {
         BookingItemEntity entity = Mapper.toEntity(dto);
         entity.setId(id);

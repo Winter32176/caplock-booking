@@ -1,15 +1,16 @@
 package com.caplock.booking.controller;
 
-import com.caplock.booking.entity.dto.EventDetailsDto;
-import com.caplock.booking.entity.dto.EventDto;
-import com.caplock.booking.entity.dto.EventTicketConfigDto;
-import com.caplock.booking.entity.dto.Response;
-import com.caplock.booking.service.EventService;
+import com.caplock.booking.entity.StatusPaymentEnum;
+import com.caplock.booking.entity.dto.*;
+import com.caplock.booking.service.*;
+import com.caplock.booking.service.impl.FlowServiceImpl;
+import com.caplock.booking.service.impl.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,9 +19,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
+    private final FlowServiceImpl flowServiceImpl;
+    private final UserService userService;
+    private final InvoiceService invoiceService;
+    private final PaymentService paymentService;
+    private final TicketService ticketService;
+    private final BookingItemService bookingItemService;
+    private final BookingService bookingService;
 
     @GetMapping("/{eventId}")
     public ResponseEntity<Response<EventDetailsDto>> getById(@PathVariable Long eventId) {
+        var b = bookingService.getById(1L).get();
+        b.setId(null);
+        var r = flowServiceImpl.processBookingFlow(1L, eventService.getEventDetailsByEventId(1L).get(), b, bookingItemService.getAllByBookingId(1L), new PaymentDto(1L, 1L, BigDecimal.valueOf(100L), StatusPaymentEnum.Paid, "S", "S", "S", null, null)); // Example flow processing, replace with actual parameters as needed
+
         return eventService.getEventDetailsByEventId(eventId)
                 .map(eventDetails -> ResponseEntity.ok(
                         Response.<EventDetailsDto>builder()

@@ -15,11 +15,6 @@ import java.util.List;
 public class BookingController {
     private final BookingService bookingService;
 
-    @PostMapping
-    public ResponseEntity<BookingDto> create(@RequestBody BookingDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.create(dto).getValue0().get()); // Optional check needed here
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<BookingDto> getById(@PathVariable Long id) {
         return bookingService.getById(id)
@@ -30,6 +25,11 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getAll() {
         return bookingService.getAll();
+    }
+
+    @PostMapping
+    public ResponseEntity<BookingDto> create(@RequestBody BookingDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.create(dto).getValue0().get()); // Optional check needed here
     }
 
     @PutMapping("/{id}")

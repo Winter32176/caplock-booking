@@ -12,6 +12,8 @@ public interface BookingItemService {
 
     List<BookingItemDto> getAll();
 
+    List<BookingItemDto> getAllByBookingId(long bookingId);
+
     BookingItemDto update(Long id, BookingItemDto dto);
 
     void delete(Long id);

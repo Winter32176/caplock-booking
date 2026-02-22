@@ -1,6 +1,7 @@
 package com.caplock.booking.service;
 
 import com.caplock.booking.entity.dto.InvoiceDto;
+import org.javatuples.Pair;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,5 +16,9 @@ public interface InvoiceService {
 
     InvoiceDto update(Long id, InvoiceDto dto);
     void delete(Long id);
-    InvoiceDto generateInvoice(Long bookingId, BigDecimal amount );
+    InvoiceDto generateInvoice(long invoiceId);
+
+    Pair<Long, String> getNewInvoiceNumberAndId();
+
+    public String getNewInvoiceNumber();
 }

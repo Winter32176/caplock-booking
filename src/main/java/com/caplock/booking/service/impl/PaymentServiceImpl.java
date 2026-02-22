@@ -43,8 +43,8 @@ public class PaymentServiceImpl implements PaymentService {
         entity.setId(id);
 
         boolean shouldPublish = paymentRepository.findById(id)
-            .map(existing -> existing.getStatus() != StatusPaymentEnum.Paid && dto.getStatus() == StatusPaymentEnum.Paid)
-            .orElse(dto.getStatus() == StatusPaymentEnum.Paid);
+                .map(existing -> existing.getStatus() != StatusPaymentEnum.Paid && dto.getStatus() == StatusPaymentEnum.Paid)
+                .orElse(dto.getStatus() == StatusPaymentEnum.Paid);
 
         PaymentEntity saved = paymentRepository.save(entity);
         if (shouldPublish) {
@@ -61,12 +61,8 @@ public class PaymentServiceImpl implements PaymentService {
     private void publishIfPaid(PaymentEntity payment) {
         if (payment.getStatus() != StatusPaymentEnum.Paid || payment.getBookingId() == null) return;
         eventPublisher.publishEvent(new PaymentSucceededEvent(
-            payment.getId(),
-            payment.getBookingId(),
-            payment.getAmount(),
-            payment.getMethod(),
-            payment.getTransactionId(),
-            payment.getPaidAt()
+                payment.getId(),
+                payment.getBookingId()
         ));
     }
 }

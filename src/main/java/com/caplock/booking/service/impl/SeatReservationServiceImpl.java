@@ -6,6 +6,7 @@ import com.caplock.booking.event.PaymentSucceededEvent;
 import com.caplock.booking.service.EventService;
 import com.caplock.booking.service.SeatReservationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.javatuples.Pair;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class SeatReservationServiceImpl implements SeatReservationService {
@@ -44,7 +45,7 @@ public class SeatReservationServiceImpl implements SeatReservationService {
                 for (long j = 0; j < configDto.getNumOfRows(); j++) {
                     for (long k = 0; k < configDto.getNumSeatsPerRow(); k++) {
                         String sb = alphabet[(int) i] + String.valueOf(j) + String.valueOf(k); // may be problem with cast to int, but for 40000 sections it should be ok
-                        seatMap.put(sb, new SeatReserver(-1, null, configDto.getTicketType()));
+                        seatMap.put(sb, new SeatReserver(-1, -1, configDto.getTicketType()));
                     }
                 }
             }
@@ -68,23 +69,29 @@ public class SeatReservationServiceImpl implements SeatReservationService {
     /*
      * private
      */
-    public Pair<Boolean, String> assignSeatsTemp(long eventId, List<Pair<String, TicketType>> seats, String bookingId) {
+    public Pair<Boolean, String> assignSeatsTemp(long eventId, List<Pair<String, TicketType>> seats, long bookingId) {
         var check = checker(eventId, seats);
         if (!check.getValue0()) return check;
 
-        for (var seat : seats)
-            Objects.requireNonNull(getSeatMapOrInit(eventId)).put(seat.getValue0(), new SeatReserver(eventId, bookingId, seat.getValue1()));
-
+        try {
+            lock.lock();
+            for (var seat : seats)
+                Objects.requireNonNull(getSeatMapOrInit(eventId)).put(seat.getValue0(), new SeatReserver(eventId, bookingId, seat.getValue1()));
+        } catch (Exception e) {
+            log.error("Error during temporary seat assignment: {}", e.getMessage());
+        } finally {
+            lock.unlock();
+        }
         return Pair.with(true, "Temp reservation has been successfully assigned");
 
         // Thread wait till event of payment is completed, if payment is successful, seats will be reserved, otherwise they will be released
         // while (!notification)Thread.onSpinWait();
-        // if (payment successful) return assignSeats(eventId, seatNums, bookingId);
+        // if (payment successful) return assignSeats(eventId, seats, bookingId);
 
     }
 
 
-    public Pair<Boolean, String> assignSeats(long eventId, List<Pair<String, TicketType>> seats, String bookingId) {
+    public Pair<Boolean, String> assignSeats(long eventId, List<Pair<String, TicketType>> seats, long bookingId) {
         var check = checker(eventId, seats);
         if (!check.getValue0()) return check;
 
@@ -120,7 +127,7 @@ public class SeatReservationServiceImpl implements SeatReservationService {
                 invalid.append(seatId).append(" ");
                 continue;
             }
-            if (seat.bookingId() != null && seat.eventId() != -1)
+            if (seat.bookingId() != -1 && seat.eventId() != -1)
                 reserved.append(seatId).append(" ");
         }
         if (!invalid.isEmpty()) return Pair.with(false, "Invalid seat(s): " + invalid);
@@ -141,7 +148,7 @@ public class SeatReservationServiceImpl implements SeatReservationService {
         if (seatMap == null) return List.of();
 
         return seatMap.entrySet().stream()
-                .filter(e -> e.getValue().bookingId() == null)  // свободно = нет брони
+                .filter(e -> e.getValue().bookingId() == -1)
                 .map(e -> Pair.with(e.getKey(), e.getValue().seatType()))
                 .toList();
     }

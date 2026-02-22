@@ -1,6 +1,7 @@
 package com.caplock.booking.entity.dto;
 
 import com.caplock.booking.entity.StatusBookingEnum;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class BookingDto {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
     private String confirmationCode;
     private Long eventId;
