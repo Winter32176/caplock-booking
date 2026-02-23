@@ -97,11 +97,10 @@ public class FlowServiceImpl implements FlowService {
 
         for (var seat : selectedSeats)
             ticketService.create(new CreateTicketDTO(
-                    seat.getValue1(),
-                    eventDetails.getEvent().toString(),  // TODO: redo, depending on how is meant to be.
-                    seat.getValue0().substring(0, 1),
-                    seat.getValue0().substring(1, 3),
-                    seat.getValue0().substring(3, 5),
+                    seat.getValue1(),eventDetails.getEvent().toString(),  // TODO: redo, depending on how is meant to be.
+                    seat.getValue0().substring(0, 2),
+                    seat.getValue0().substring(2, 4),
+                    seat.getValue0().substring(4, 6),
                     user.getName(),
                     user.getEmailHash(),
                     bookingDto.getDiscountCode()));

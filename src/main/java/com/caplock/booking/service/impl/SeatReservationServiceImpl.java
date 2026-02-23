@@ -53,9 +53,10 @@ public class SeatReservationServiceImpl implements SeatReservationService {
             for (long i = 0; i < configDto.getNumOfSections(); i++) {
                 for (long j = 0; j < configDto.getNumOfRows(); j++) {
                     for (long k = 0; k < configDto.getNumSeatsPerRow(); k++) {
-                        String sb = alphabet[(int) i] +
-                                (String.valueOf(j).length() < 2 ? ("0" + String.valueOf(j)) : String.valueOf(j)) +
-                                (String.valueOf(k).length() < 2 ? ("0" + String.valueOf(k)) : String.valueOf(k)); // may be problem with cast to int, but for 40000 sections it should be ok
+                        int sectionIndex=(int)i;
+                        String sb = configDto.getTicketType().name().charAt(0)+ "" + alphabet[sectionIndex]
+                                +(String.valueOf(j).length() < 2 ? ("0" + String.valueOf(j)) : String.valueOf(j))
+                                +(String.valueOf(k).length() < 2 ? ("0" + String.valueOf(k)) : String.valueOf(k));// may be problem with cast to int, but for 40000 sections it should be ok
                         seatMap.put(sb, new SeatReserver(-1, -1, configDto.getTicketType()));
                     }
                 }
