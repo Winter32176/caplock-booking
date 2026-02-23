@@ -76,7 +76,7 @@ public class FlowServiceImpl implements FlowService {
             bookingDto.setStatus(StatusBookingEnum.PAYMENT_FAILED);
             bookingService.update(bookingDto.getId(), bookingDto);
             seatReservationServiceProvider
-                    .getObject().clearReservationOfSeats(eventDetails.getEvent().getId(), bookingDto.getId()); // not implemented yet, but should be implemented in future
+                    .getObject().clearReservationOfSeats(eventDetails.getEvent().getId(), bookingDto.getId()); // TODO: not implemented yet, but should be implemented in future
             return Triplet.with(false, "Payment processing failed", null);
         }
 

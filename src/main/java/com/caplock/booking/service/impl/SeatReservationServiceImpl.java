@@ -11,6 +11,7 @@ import org.javatuples.Pair;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -88,8 +89,11 @@ public class SeatReservationServiceImpl implements SeatReservationService {
             lock.unlock();
         }
 
+
         Thread thread = new Thread(() -> {
-            while (!notification) Thread.onSpinWait();
+            var timeToWait = 30000; // 30 seconds
+            var timeWaited = 0;
+            while (!notification)  Thread.onSpinWait();
             var result = paymentSuccess ? assignSeats(eventId, seats, bookingId) : Pair.with(false, "Payment failed, reservation cleared");
             if (!paymentSuccess) clearReservationOfSeats(eventId, bookingId);
             log.info("{} {}", result.getValue0(), result.getValue1());
