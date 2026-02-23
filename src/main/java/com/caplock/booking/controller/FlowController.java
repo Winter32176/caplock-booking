@@ -61,7 +61,9 @@ public class FlowController {
         // TODO: split these into 2 files
         List<BookingRequestDTO.TicketSelectionDTO> tickets = request.getTickets();
         log.info("Ticket seat config: {}, Seat number: {}", tickets.getFirst().getTicketConfigId().toString(), tickets.getFirst().getSeat().toString());
-//        seatReservationServiceImpl.assignSeatsTemp();
+        for (var ticket : tickets) {
+            seatReservationServiceImpl.assignSeatsTemp(ticket, bookingDetails.getId());
+        }
 
         // TODO: 5. handle payment
         // TODO on success -> status changes to CONFIRMED

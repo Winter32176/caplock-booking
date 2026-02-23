@@ -1,10 +1,14 @@
 package com.caplock.booking.service.impl;
 
 import com.caplock.booking.entity.TicketType;
+import com.caplock.booking.entity.dto.BookingRequestDTO;
 import com.caplock.booking.entity.dto.EventTicketConfigDto;
 import com.caplock.booking.event.PaymentSucceededEvent;
+import com.caplock.booking.service.BookingService;
 import com.caplock.booking.service.EventService;
+import com.caplock.booking.service.EventTicketConfigService;
 import com.caplock.booking.service.SeatReservationService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.javatuples.Pair;
@@ -28,6 +32,7 @@ public class SeatReservationServiceImpl implements SeatReservationService {
     private static final ConcurrentHashMap<Long, ConcurrentHashMap<String, SeatReserver>> eventsSeat = new ConcurrentHashMap<>();
     private static final char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     private final EventService eventService;
+    private final EventTicketConfigService  eventTicketConfigService;
     Thread thread = new Thread();
 
     @EventListener
@@ -90,6 +95,11 @@ public class SeatReservationServiceImpl implements SeatReservationService {
         }
 
 
+        return waitPaymentOrReturn(eventId, seats, bookingId);
+
+    }
+
+    private @NonNull Pair<Boolean, String> waitPaymentOrReturn(long eventId, List<Pair<String, TicketType>> seats, long bookingId) {
         Thread thread = new Thread(() -> {
             var timeToWait = 30000; // 30 seconds
             var timeWaited = 0;
@@ -101,6 +111,32 @@ public class SeatReservationServiceImpl implements SeatReservationService {
         });
         thread.start();
         return Pair.with(true, "Temp reservation has been successfully assigned");
+    }
+
+
+    public Pair<Boolean, String> assignSeatsTemp(BookingRequestDTO.TicketSelectionDTO seatConf, long bookingId) {
+        var ticketConf=eventTicketConfigService.getById(seatConf.getTicketConfigId()).orElseThrow();
+        var seatType=ticketConf.getTicketType();
+        var eventId=ticketConf.getEventId();
+        var listOfSeats=List.of(Pair.with(
+                seatConf.getSeat(),
+                seatType));
+        var check = checker(eventId, listOfSeats);
+        if (!check.getValue0()) return check;
+
+        try {
+            lock.lock();
+
+                Objects.requireNonNull(getSeatMapOrInit(eventId))
+                        .put(seatConf.getSeat(), new SeatReserver(eventId, bookingId, seatType));
+        } catch (Exception e) {
+            log.error("Error during temporary seat assignment: {}", e.getMessage());
+        } finally {
+            lock.unlock();
+        }
+
+
+        return waitPaymentOrReturn(eventId, listOfSeats, bookingId);
 
     }
 
@@ -144,8 +180,8 @@ public class SeatReservationServiceImpl implements SeatReservationService {
             if ((seat.bookingId() != -1 && seat.eventId() != -1) && seats.contains(Pair.with(seatId, seat.seatType())))
                 reserved.append(seatId).append(" ");
         }
-        if (!invalid.isEmpty()) return Pair.with(false, "Invalid seat(s): " + invalid);
-        if (!reserved.isEmpty()) return Pair.with(false, "Some seat is reserved: " + reserved);
+        if (!invalid.toString().isBlank()) return Pair.with(false, "Invalid seat(s): " + invalid);
+        if (!reserved.toString().isBlank()) return Pair.with(false, "Some seat is reserved: " + reserved);
         return Pair.with(true, "OK");
     }
 
