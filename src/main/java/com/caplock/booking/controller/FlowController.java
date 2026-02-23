@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.awt.print.Book;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -53,10 +54,13 @@ public class FlowController {
                 .totalPrice(totalPrice)
                 .build();
 
-        // TODO: 3. create a new booking
         BookingDto bookingDetails = bookingService.createNewBooking(newBooking);
 
         // TODO: 4. assign seats
+        // temp. assign selected seats
+        // TODO: split these into 2 files
+        List<BookingRequestDTO.TicketSelectionDTO> tickets = request.getTickets();
+        log.info("Ticket seat config: {}, Seat number: {}", tickets.getFirst().getTicketConfigId().toString(), tickets.getFirst().getSeat().toString());
 //        seatReservationServiceImpl.assignSeatsTemp();
 
         // TODO: 5. handle payment
