@@ -1,5 +1,6 @@
 package com.caplock.booking.service.impl;
 
+import com.caplock.booking.entity.dto.InvoiceFormDto;
 import com.caplock.booking.service.InvoiceService;
 import com.caplock.booking.entity.dao.InvoiceEntity;
 import com.caplock.booking.entity.dto.InvoiceDto;
@@ -50,9 +51,28 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public InvoiceDto generateInvoiceFromForm(InvoiceFormDto invoiceFormDto) {
+        return create(new InvoiceDto(-1L,
+                invoiceFormDto.bookingId(),
+                invoiceFormDto.paymentId(),
+                null,
+                invoiceFormDto.holderName(),
+                invoiceFormDto.holderEmail(),
+                invoiceFormDto.totalAmount(),
+                BigDecimal.ZERO,
+                invoiceFormDto.totalAmount(),
+                LocalDateTime.now(),
+                null));
+    }
+
+    @Override
     public InvoiceDto create(InvoiceDto dto) {
         InvoiceEntity saved = repository.save(modelMapper.map(dto, InvoiceEntity.class));
-        return modelMapper.map(saved, InvoiceDto.class);
+        if (saved != null) {
+            log.info("Invoice created with id: {}", saved.getId());
+            return generateInvoice(saved.getId());
+        }
+        return null;
     }
 
     @Override
@@ -114,8 +134,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Nonnull
     private static String getInvoiceNumber() {
-        String invoiceNumber = "INV-" + UUID.randomUUID().toString().substring(0, 8);
-        return invoiceNumber;
+        return "INV-" + UUID.randomUUID().toString().substring(0, 8);
     }
 
     @Override
@@ -126,7 +145,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public String getNewInvoiceNumber() {
-        return  getInvoiceNumber();
+        return getInvoiceNumber();
     }
 
 }

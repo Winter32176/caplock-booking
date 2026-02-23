@@ -1,27 +1,27 @@
 package com.caplock.booking.controller;
 
 import com.caplock.booking.entity.StatusBookingEnum;
+import com.caplock.booking.entity.StatusPaymentEnum;
 import com.caplock.booking.entity.dao.BookingEntity;
-import com.caplock.booking.entity.dto.BookingDto;
-import com.caplock.booking.entity.dto.BookingRequestDTO;
-import com.caplock.booking.entity.dto.EventDetailsDto;
-import com.caplock.booking.entity.dto.EventDto;
+import com.caplock.booking.entity.dto.*;
 import com.caplock.booking.service.*;
 import com.caplock.booking.service.impl.SeatReservationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.swing.plaf.TableHeaderUI;
 import java.awt.print.Book;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("api/v1/handle-booking")
 @RequiredArgsConstructor
 public class FlowController {
@@ -34,7 +34,7 @@ public class FlowController {
     private final InvoiceService invoiceService;
 
     @PostMapping
-    public String handleBooking(@ModelAttribute BookingRequestDTO request) {
+    public String handleBooking(@ModelAttribute BookingRequestDTO request) throws InterruptedException {
         log.info("Started processing booking with id: {}", request.getEventId());
 
         // TODO: validations
@@ -45,8 +45,12 @@ public class FlowController {
         BigDecimal totalPrice = new BigDecimal(140);
         // TODO: add discount count code field in the form
         String discountCode = "AV25B";
+        String holderName = "John Doe";
+        String holderEmail = "email@email.com";
+        String paymentMethod = "CREDIT_CARD";
+        String transactionId = "1558df5-8c9b-4e7a-9c3a-2b1e5f6a7b8c";
 
-        EventDto evenDetails = eventService.getEventDetailsByEventId(request.getEventId()).orElseThrow(()->new IllegalArgumentException("Object must be not null")).getEvent(); // not proper exception
+        EventDto evenDetails = eventService.getEventDetailsByEventId(request.getEventId()).orElseThrow(() -> new IllegalArgumentException("Object must be not null")).getEvent(); // not proper exception
 
         BookingDto newBooking = BookingDto.builder()
                 .eventId(evenDetails.getId())
@@ -62,20 +66,42 @@ public class FlowController {
         List<BookingRequestDTO.TicketSelectionDTO> tickets = request.getTickets();
         log.info("Ticket seat config: {}, Seat number: {}", tickets.getFirst().getTicketConfigId().toString(), tickets.getFirst().getSeat());
         for (var ticket : tickets) {
-         var result=seatReservationServiceImpl.assignSeatsTemp(ticket, bookingDetails.getId());
-        if(!result.getValue0()) log.error("Failed to assign seat {} for ticket config id {}", ticket.getSeat(), ticket.getTicketConfigId());
+            var result = seatReservationServiceImpl.assignSeatsTemp(ticket, bookingDetails.getId());
+            if (!result.getValue0())
+                log.error("Failed to assign seat {} for ticket config id {}", ticket.getSeat(), ticket.getTicketConfigId());
         }
 
         // TODO: 5. handle payment
         // TODO on success -> status changes to CONFIRMED
         // TODO on fail -> status changes to FAILED or CANCELED
-        paymentService.create(null);
+        var paymentDto = paymentService.create(new PaymentDto(
+                null,
+                bookingDetails.getId(),
+                totalPrice,
+                StatusPaymentEnum.PENDING,
+                paymentMethod,
+                transactionId,
+                "OK",
+                LocalDateTime.now(),
+                null
+        ));
+
+        Thread.currentThread().wait(1000);
+
+        paymentDto.setStatus(StatusPaymentEnum.PAID);
+        paymentService.update(paymentDto.getId(), paymentDto);
 
         // TODO: 6. generate tickets
 //        ticketService.create()
 
         // TODO: 7. generate invoice
-//        invoiceService.generateInvoice()
+        var invoice = invoiceService.generateInvoiceFromForm(new InvoiceFormDto(
+                bookingDetails.getId(),
+                totalPrice,
+                discountCode,
+                paymentDto.getId(),
+                holderName,
+                holderEmail)); // it also generates invoice
 
         return "redirect:/ui/bookings";
     }
