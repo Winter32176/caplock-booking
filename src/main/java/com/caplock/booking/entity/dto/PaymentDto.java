@@ -21,6 +21,4 @@ public class PaymentDto {
     private String method;
     private String transactionId;
     private String providerResponse;
-    private LocalDateTime createdAt;
-    private LocalDateTime paidAt;
 }

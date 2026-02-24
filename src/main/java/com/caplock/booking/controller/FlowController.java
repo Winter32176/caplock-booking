@@ -82,13 +82,10 @@ public class FlowController {
                 StatusPaymentEnum.PENDING,
                 paymentMethod,
                 transactionId,
-                "OK",
-                LocalDateTime.now(),
                 null
         ));
 
         //Thread.currentThread().wait(1000);
-
         if (paymentDto.getStatus().equals(StatusPaymentEnum.PAID)) {
             //Thread.currentThread().wait(1000);
 

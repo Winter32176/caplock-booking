@@ -1,9 +1,11 @@
 package com.caplock.booking.service.impl;
 
 import com.caplock.booking.entity.TicketType;
+import com.caplock.booking.entity.dao.EventSeatsEntity;
 import com.caplock.booking.entity.dto.BookingRequestDTO;
 import com.caplock.booking.entity.dto.EventTicketConfigDto;
 import com.caplock.booking.event.PaymentSucceededEvent;
+import com.caplock.booking.repository.EventSeatRepository;
 import com.caplock.booking.service.BookingService;
 import com.caplock.booking.service.EventService;
 import com.caplock.booking.service.EventTicketConfigService;
@@ -34,6 +36,7 @@ public class SeatReservationServiceImpl implements SeatReservationService {
     private static final char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     private final EventService eventService;
     private final BookingService bookingService;
+    private final EventSeatRepository eventSeatRepository;
     private final EventTicketConfigService eventTicketConfigService;
     private final ConcurrentHashMap<Long, ScheduledFuture<?>> paymentTimeouts = new ConcurrentHashMap<>();
     private final ScheduledExecutorService reservationScheduler = Executors.newScheduledThreadPool(2);
@@ -56,7 +59,7 @@ public class SeatReservationServiceImpl implements SeatReservationService {
                     .toList();
             assignSeats(eventId, seats, event.bookingId());
             // TODO: SAVE TO DB
-
+          //  eventSeatRepository.save(new EventSeatsEntity(eventId, seats));
             log.info("Payment succeeded for bookingId: {}", event.bookingId());
         } else {
             log.info("Payment failed, clearing reservation for bookingId: {}", event.bookingId());

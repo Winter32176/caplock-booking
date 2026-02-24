@@ -5,33 +5,47 @@ import com.caplock.booking.entity.dao.PaymentEntity;
 import com.caplock.booking.entity.StatusPaymentEnum;
 import com.caplock.booking.event.PaymentSucceededEvent;
 import com.caplock.booking.repository.PaymentRepository;
+import com.caplock.booking.service.PaymentGateway;
 import com.caplock.booking.service.PaymentService;
 import com.caplock.booking.util.Mapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final PaymentGateway paymentGateway;
 
     @Override
     public PaymentDto create(PaymentDto dto) {
         // TODO: validations, e.g., check if booking exists, validate payment method, etc.
         // TODO: integrate with payment gateway, e.g., call payment API, handle response, etc.
-        // For now, just a placeholder to indicate where payment processing logic would go.
-        // boolean result = paymentGateway.processPayment(dto);
-        // if (!result) {
-        //     throw new RuntimeException("Payment processing failed");
-        // } else {
-        dto.setStatus(StatusPaymentEnum.PAID);
-        // }
-        PaymentEntity saved = paymentRepository.save(Mapper.toEntity(dto));
+        PaymentGateway.TransactionResult result = paymentGateway.processPayment(dto.getBookingId(), dto.getAmount(), dto.getMethod());
+        PaymentEntity payment = Mapper.toEntity(dto);
+        payment.setTransactionId(result.transactionId());
+        payment.setPaidAt(LocalDateTime.now());
+        payment.setCreatedAt(LocalDateTime.now());
+        payment.setProviderResponse(result.message());
+        if (!result.success()) {
+            payment.setStatus(StatusPaymentEnum.FAILED);
+            log.info("Payment failed for bookingId: {}, amount: {}, method: {}, transactionId: {}, message: {}",
+                    dto.getBookingId(), dto.getAmount(), dto.getMethod(), result.transactionId(), result.message());
+        } else {
+            log.info("Payment succeeded for bookingId: {}, amount: {}, method: {}, transactionId: {}",
+                    dto.getBookingId(), dto.getAmount(), dto.getMethod(), result.transactionId());
+            payment.setStatus(StatusPaymentEnum.PAID);
+        }
+        PaymentEntity saved = paymentRepository.save(payment);
 //        publishIfPaid(saved);
         return Mapper.toDto(saved);
     }
