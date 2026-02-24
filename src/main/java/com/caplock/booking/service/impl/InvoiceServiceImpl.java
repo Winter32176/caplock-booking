@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.javatuples.Pair;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -42,6 +43,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(dao -> modelMapper.map(dao, InvoiceDto.class));
     }
 
+    @Transactional
     @Override
     public InvoiceDto update(Long id, InvoiceDto dto) {
         InvoiceEntity entity = modelMapper.map(dto, InvoiceEntity.class);
@@ -50,9 +52,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         return modelMapper.map(saved, InvoiceDto.class);
     }
 
+    @Transactional
     @Override
     public InvoiceDto generateInvoiceFromForm(InvoiceFormDto invoiceFormDto) {
-        return create(new InvoiceDto(-1L,
+        return create(new InvoiceDto(null,
                 invoiceFormDto.bookingId(),
                 invoiceFormDto.paymentId(),
                 null,
@@ -65,8 +68,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                 null));
     }
 
+    @Transactional
     @Override
     public InvoiceDto create(InvoiceDto dto) {
+        // Ensure Hibernate treats this as a new entity
+        dto.setId(null);
         InvoiceEntity saved = repository.save(modelMapper.map(dto, InvoiceEntity.class));
         if (saved != null) {
             log.info("Invoice created with id: {}", saved.getId());
@@ -116,14 +122,13 @@ public class InvoiceServiceImpl implements InvoiceService {
                 writer.write(content);
             }
 
-            InvoiceEntity dao = new InvoiceEntity();
-            dao.setBookingId(invoice.getBookingId());
-            dao.setTotalAmount(invoice.getTotalAmount());
-            dao.setInvoiceNumber(invoice.getInvoiceNumber());
-            dao.setIssuedAt(invoice.getIssuedAt());
-            dao.setPdfUrl(filePath);
+            InvoiceEntity entity = repository.findById(invoiceId)
+                    .orElseThrow(() -> new RuntimeException("Invoice not found"));
+            entity.setInvoiceNumber(invoice.getInvoiceNumber());
+            entity.setIssuedAt(invoice.getIssuedAt());
+            entity.setPdfUrl(filePath);
 
-            InvoiceEntity saved = repository.save(dao);
+            InvoiceEntity saved = repository.save(entity);
             return modelMapper.map(saved, InvoiceDto.class);
 
         } catch (IOException e) {

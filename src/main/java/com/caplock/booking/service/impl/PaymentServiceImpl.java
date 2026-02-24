@@ -22,8 +22,17 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentDto create(PaymentDto dto) {
+        // TODO: validations, e.g., check if booking exists, validate payment method, etc.
+        // TODO: integrate with payment gateway, e.g., call payment API, handle response, etc.
+        // For now, just a placeholder to indicate where payment processing logic would go.
+        // boolean result = paymentGateway.processPayment(dto);
+        // if (!result) {
+        //     throw new RuntimeException("Payment processing failed");
+        // } else {
+        dto.setStatus(StatusPaymentEnum.PAID);
+        // }
         PaymentEntity saved = paymentRepository.save(Mapper.toEntity(dto));
-        publishIfPaid(saved);
+//        publishIfPaid(saved);
         return Mapper.toDto(saved);
     }
 

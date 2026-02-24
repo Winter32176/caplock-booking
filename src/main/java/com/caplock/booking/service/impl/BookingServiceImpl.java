@@ -26,7 +26,7 @@ import java.util.UUID;
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final BookingItemService bookingItemService;
-    private final ModelMapperConfig  modelMapper;
+    private final ModelMapperConfig modelMapper;
 
 
     public BookingDto createNewBooking(BookingDto bookingDTO) {
@@ -79,7 +79,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto update(Long id, BookingDto dto) {
         BookingEntity entity = bookingRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
-
+        bookingRepository.delete(entity);
         BookingEntity saved = bookingRepository.saveAndFlush(Mapper.toEntity(dto));
         return Mapper.toDto(saved);
     }

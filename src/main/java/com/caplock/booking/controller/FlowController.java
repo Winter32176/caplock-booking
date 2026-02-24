@@ -86,23 +86,31 @@ public class FlowController {
                 null
         ));
 
-        Thread.currentThread().wait(1000);
+        //Thread.currentThread().wait(1000);
 
-        paymentDto.setStatus(StatusPaymentEnum.PAID);
-        paymentService.update(paymentDto.getId(), paymentDto);
+        if(paymentDto.getStatus().equals(StatusPaymentEnum.PAID)) {
+            //Thread.currentThread().wait(1000);
 
-        // TODO: 6. generate tickets
-//        ticketService.create()
+            // TODO: 6. generate tickets
+            // ticketService.create()
 
-        // TODO: 7. generate invoice
-        var invoice = invoiceService.generateInvoiceFromForm(new InvoiceFormDto(
-                bookingDetails.getId(),
-                totalPrice,
-                discountCode,
-                paymentDto.getId(),
-                holderName,
-                holderEmail)); // it also generates invoice
+            // TODO: 7. generate invoice
+            var invoice = invoiceService.generateInvoiceFromForm(new InvoiceFormDto(
+                    bookingDetails.getId(),
+                    totalPrice,
+                    discountCode,
+                    paymentDto.getId(),
+                    holderName,
+                    holderEmail)); // it also generates invoice
 
+            bookingDetails.setStatus(StatusBookingEnum.DONE);
+            bookingService.update(bookingDetails.getId(), bookingDetails);
+        }else {
+            // Show error message to user and redirect to booking page
+            log.error("Payment failed for booking id: {}, payment id: {}", bookingDetails.getId(), paymentDto.getId());
+             bookingDetails.setStatus(StatusBookingEnum.CANCELLED);
+             bookingService.update(bookingDetails.getId(), bookingDetails);
+        }
         return "redirect:/ui/bookings";
     }
 
