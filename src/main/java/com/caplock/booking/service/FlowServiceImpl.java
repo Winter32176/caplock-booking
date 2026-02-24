@@ -4,6 +4,7 @@ import com.caplock.booking.entity.StatusBookingEnum;
 import com.caplock.booking.entity.StatusPaymentEnum;
 import com.caplock.booking.entity.TicketType;
 import com.caplock.booking.entity.dto.*;
+import com.caplock.booking.exception.SeatNotAssignedException;
 import com.caplock.booking.repository.EventTicketConfigRepository;
 import com.caplock.booking.service.impl.SeatReservationServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class FlowServiceImpl implements FlowService {
     private final EventTicketConfigRepository eventTicketConfigRepository;
 
     @Override
-    public void handleBooking(BookingRequestDTO request) {
+    public void handleBooking(BookingRequestDTO request) throws SeatNotAssignedException {
         // TODO: validations
 
         // create new booking using information provided from the event booking form
@@ -57,11 +57,10 @@ public class FlowServiceImpl implements FlowService {
 
         BookingDto bookingDetails = bookingService.createNewBooking(newBooking);
 
-        // temp. assign selected seatsList<BookingRequestDTO.TicketSelectionDTO> tickets = request.getTickets();
+        // temp. assign seats while in process of booking them
         for (TicketSelectionDTO ticket : tickets) {
             var result = seatReservationServiceImpl.assignSeatsTemp(ticket, bookingDetails.getId());
-            if (!result.getValue0())
-                log.error("Failed to assign seat {} for ticket config id {}", ticket.getSeat(), ticket.getTicketConfigId());
+            if (!result.getValue0()) throw new SeatNotAssignedException("Failed to assign seat");
         }
 
         // TODO: 5. handle payment
