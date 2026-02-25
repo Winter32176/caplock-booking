@@ -234,6 +234,8 @@ public class SeatReservationServiceImpl implements SeatReservationService {
                                 : seat
                 )
         );
+
+        eventSeatRepository.deleteById(bookingId);
     }
 
 
