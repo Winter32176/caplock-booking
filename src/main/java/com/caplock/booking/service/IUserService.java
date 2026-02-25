@@ -12,6 +12,8 @@ public interface IUserService extends UserDetailsService {
 
     Optional<UserDto> getById(Long id);
 
+    long getUserIdByEmail(String email);
+
     List<UserDto> getAll();
 
     UserDto update(Long id, UserDto dto);

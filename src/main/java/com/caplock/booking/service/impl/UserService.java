@@ -32,6 +32,11 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public long getUserIdByEmail(String email) {
+        return findByEmailHash(email).orElseThrow().getId();
+    }
+
+    @Override
     public List<UserDto> getAll() {
         return userRepository.findAll().stream().map(Mapper::toDto).toList();
     }

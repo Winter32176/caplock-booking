@@ -17,6 +17,7 @@ import org.javatuples.Pair;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,7 +49,7 @@ public class SeatReservationServiceImpl implements SeatReservationService {
             timeout.cancel(false);
         }
 
-        if (Boolean.TRUE.equals(event.Success())) {
+        if (event.Success()) {
 
             var eventId = bookingService.getById(event.bookingId()).orElseThrow().getEventId();
             var seatMap = eventsSeat.get(eventId);
@@ -58,8 +59,11 @@ public class SeatReservationServiceImpl implements SeatReservationService {
                     .map(e -> Pair.with(e.getKey(), e.getValue().seatType()))
                     .toList();
             assignSeats(eventId, seats, event.bookingId());
-            // TODO: SAVE TO DB
-          //  eventSeatRepository.save(new EventSeatsEntity(eventId, seats));
+
+            for (var seat : seats) {
+                eventSeatRepository.save(
+                        new EventSeatsEntity(null, eventId, seat.getValue0(), seat.getValue1(), event.bookingId(), LocalDateTime.now()));
+            }
             log.info("Payment succeeded for bookingId: {}", event.bookingId());
         } else {
             log.info("Payment failed, clearing reservation for bookingId: {}", event.bookingId());
@@ -200,8 +204,6 @@ public class SeatReservationServiceImpl implements SeatReservationService {
 
     @Override
     public boolean clearReservationOfSeats(long eventId, long bookingId) {
-
-        // TODO: Implement logic to clear temporary reservations for the given bookingId and eventId.
         eventsSeat.get(eventId).replaceAll((key, seat) ->
                 seat.bookingId() == bookingId
                         ? new SeatReserver(-1, -1, seat.seatType())

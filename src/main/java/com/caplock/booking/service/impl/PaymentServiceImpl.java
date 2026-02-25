@@ -46,7 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setStatus(StatusPaymentEnum.PAID);
         }
         PaymentEntity saved = paymentRepository.save(payment);
-//        publishIfPaid(saved);
+        publishIfPaid(saved);
         return Mapper.toDto(saved);
     }
 
