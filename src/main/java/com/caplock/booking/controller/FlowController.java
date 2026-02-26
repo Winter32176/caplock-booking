@@ -26,9 +26,8 @@ public class FlowController {
     public String handleBooking(@ModelAttribute BookingRequestDTO request, Model model) {
         log.info("Started processing booking with id: {}", request.getEventId());
         try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String userEmail = auth.getName();
-            Long bookingId = flowService.handleBooking(request, userEmail );
+
+            Long bookingId = flowService.handleBooking(request);
             model.addAttribute("tickets", ticketService.findByBookingId(bookingId));
             return "/ui/tickets/confirmation";
         } catch (SeatNotAssignedException e) {
