@@ -2,6 +2,7 @@ package com.caplock.booking.config;
 
 import com.caplock.booking.auth.AuthEntryPointJwt;
 import com.caplock.booking.auth.JwtAuthFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -40,13 +42,30 @@ public class SpringSecurityConf {
     }
 
     @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            String accept = request.getHeader("Accept");
+            boolean wantsHtml = (accept != null && accept.contains("text/html"))
+                    || (request.getRequestURI() != null && request.getRequestURI().startsWith("/ui/"));
+            if (wantsHtml) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                request.getRequestDispatcher("/ui/error").forward(request, response);
+                return;
+            }
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "403 Forbidden");
+        };
+    }
+
+    @Bean
     @Order(1)
     public SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .exceptionHandling(e -> e.authenticationEntryPoint(unauthorizedHandler))
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint(unauthorizedHandler)
+                        .accessDeniedHandler(accessDeniedHandler()))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a.requestMatchers("/api/v1/auth/**")
                         .permitAll()
@@ -63,6 +82,7 @@ public class SpringSecurityConf {
                 .securityMatcher("/ui/**", "/login", "/h2-console/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
+                .exceptionHandling(e -> e.accessDeniedHandler(accessDeniedHandler()))
                 .authorizeHttpRequests(a -> a.requestMatchers(
                                 "/login",
                                 "/ui/auth/**",

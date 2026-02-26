@@ -15,7 +15,7 @@ public class AuthViewController {
 
     @GetMapping("/logout")
     public String logout() {
-        return "ui/auth/logout";
+        return "/ui/auth/login";
     }
 
     @GetMapping("/register")

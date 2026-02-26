@@ -18,6 +18,11 @@ import java.io.IOException;
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        if (wantsHtml(request)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            request.getRequestDispatcher("/ui/error").forward(request, response);
+            return;
+        }
 
         Throwable cause = authException.getCause();
         if (isJwtAuthenticationError(authException, cause)) {
@@ -41,5 +46,15 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
         // Check the exception class name as fallback for authorization errors
         return authException.getClass().getSimpleName().contains("Jwt")
                 || authException.getClass().getSimpleName().contains("Authorization");
+    }
+
+    private boolean wantsHtml(HttpServletRequest request) {
+        String accept = request.getHeader("Accept");
+        if (accept != null && accept.contains("text/html")) {
+            return true;
+        }
+
+        String uri = request.getRequestURI();
+        return uri != null && uri.startsWith("/ui/");
     }
 }
