@@ -1,5 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--
+<head th:replace="~{fragments/layout :: head('Events')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<main>
+    <div class="page-header">
+        <h1>Events</h1>
+        <a class="btn btn-primary" th:href="@{/ui/events/new}">+ Create Event</a>
+    </div>
+
+    <div class="card">
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+-->
 <head>
     <meta charset="UTF-8">
     <title>Events</title>
@@ -181,34 +198,27 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item : ${items}" th:data-href="@{/ui/events/{id}(id=${item.id})}" class="clickable-row">
+            <tr th:each="item : ${items}">
                 <td th:text="${item.id}">1</td>
-                <td><a class="title-link" th:href="@{/ui/events/{id}(id=${item.id})}" th:text="${item.title}"
-                       onclick="event.stopPropagation()">Title</a></td>
-                <td th:text="${#temporals.format(item.startTime, 'dd MMM yyyy, HH:mm')}">2025-01-01 10:00</td>
-                <td><span class="badge" th:text="${item.status}">New</span></td>
+                <td th:text="${item.title}">Title</td>
+                <td th:text="${item.startTime}">2025-01-01T10:00:00</td>
+                <td><span class="badge badge-blue" th:text="${item.status}">New</span></td>
                 <td>
-                    <div class="actions" onclick="event.stopPropagation()">
-                        <a class="action-link" th:href="@{/ui/events/{id}/edit(id=${item.id})}">Edit</a>
-                        <form class="delete-form" th:action="@{/ui/events/{id}/delete(id=${item.id})}" method="post">
-                            <button class="delete-btn" type="submit">Delete</button>
+                    <div class="btn-group">
+                        <a class="btn btn-view" th:href="@{/ui/events/{id}(id=${item.id})}">View</a>
+                        <a class="btn btn-edit" th:href="@{/ui/events/{id}/edit(id=${item.id})}">Edit</a>
+                        <form th:action="@{/ui/events/{id}/delete(id=${item.id})}" method="post">
+                            <button class="btn btn-danger" type="submit">Delete</button>
                         </form>
                     </div>
                 </td>
             </tr>
+            <tr th:if="${items == null or #lists.isEmpty(items)}">
+                <td class="empty" colspan="5">No events yet.</td>
+            </tr>
             </tbody>
         </table>
     </div>
-
-</div>
-
-<script>
-    document.querySelectorAll('.clickable-row').forEach(row => {
-        row.addEventListener('click', () => {
-            window.location.href = row.dataset.href;
-        });
-    });
-</script>
-
+</main>
 </body>
 </html>

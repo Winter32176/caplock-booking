@@ -152,8 +152,6 @@ public final class Mapper {
         dto.setMethod(entity.getMethod());
         dto.setTransactionId(entity.getTransactionId());
         dto.setProviderResponse(entity.getProviderResponse());
-        dto.setCreatedAt(entity.getCreatedAt());
-        dto.setPaidAt(entity.getPaidAt());
         return dto;
     }
 
@@ -167,8 +165,6 @@ public final class Mapper {
         entity.setMethod(dto.getMethod());
         entity.setTransactionId(dto.getTransactionId());
         entity.setProviderResponse(dto.getProviderResponse());
-        entity.setCreatedAt(dto.getCreatedAt());
-        entity.setPaidAt(dto.getPaidAt());
         return entity;
     }
 

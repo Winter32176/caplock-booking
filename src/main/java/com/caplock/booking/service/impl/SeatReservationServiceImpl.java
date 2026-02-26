@@ -1,9 +1,12 @@
 package com.caplock.booking.service.impl;
 
 import com.caplock.booking.entity.TicketType;
+import com.caplock.booking.entity.dao.EventSeatsEntity;
+import com.caplock.booking.entity.dto.BookingRequestDTO;
 import com.caplock.booking.entity.dto.EventTicketConfigDto;
 import com.caplock.booking.entity.dto.TicketSelectionDTO;
 import com.caplock.booking.event.PaymentSucceededEvent;
+import com.caplock.booking.repository.EventSeatRepository;
 import com.caplock.booking.service.BookingService;
 import com.caplock.booking.service.EventService;
 import com.caplock.booking.service.EventTicketConfigService;
@@ -15,6 +18,7 @@ import org.javatuples.Pair;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +38,7 @@ public class SeatReservationServiceImpl implements SeatReservationService {
     private static final char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
     private final EventService eventService;
     private final BookingService bookingService;
+    private final EventSeatRepository eventSeatRepository;
     private final EventTicketConfigService eventTicketConfigService;
     private final ConcurrentHashMap<Long, ScheduledFuture<?>> paymentTimeouts = new ConcurrentHashMap<>();
     private final ScheduledExecutorService reservationScheduler = Executors.newScheduledThreadPool(2);
@@ -45,7 +50,7 @@ public class SeatReservationServiceImpl implements SeatReservationService {
             timeout.cancel(false);
         }
 
-        if (Boolean.TRUE.equals(event.Success())) {
+        if (event.Success()) {
 
             var eventId = bookingService.getById(event.bookingId()).orElseThrow().getEventId();
             var seatMap = eventsSeat.get(eventId);
@@ -55,8 +60,11 @@ public class SeatReservationServiceImpl implements SeatReservationService {
                     .map(e -> Pair.with(e.getKey(), e.getValue().seatType()))
                     .toList();
             assignSeats(eventId, seats, event.bookingId());
-            // TODO: SAVE TO DB
 
+            for (var seat : seats) {
+                eventSeatRepository.save(
+                        new EventSeatsEntity(null, eventId, seat.getValue0(), seat.getValue1(), event.bookingId(), LocalDateTime.now()));
+            }
             log.info("Payment succeeded for bookingId: {}", event.bookingId());
         } else {
             log.info("Payment failed, clearing reservation for bookingId: {}", event.bookingId());
@@ -197,8 +205,6 @@ public class SeatReservationServiceImpl implements SeatReservationService {
 
     @Override
     public boolean clearReservationOfSeats(long eventId, long bookingId) {
-
-        // TODO: Implement logic to clear temporary reservations for the given bookingId and eventId.
         eventsSeat.get(eventId).replaceAll((key, seat) ->
                 seat.bookingId() == bookingId
                         ? new SeatReserver(-1, -1, seat.seatType())
@@ -229,6 +235,8 @@ public class SeatReservationServiceImpl implements SeatReservationService {
                                 : seat
                 )
         );
+
+        eventSeatRepository.deleteById(bookingId);
     }
 
 

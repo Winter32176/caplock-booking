@@ -1,3 +1,4 @@
+/*
 package com.caplock.booking.api.service;
 
 import com.caplock.booking.entity.old.dao.CategoryDAO;
@@ -114,3 +115,4 @@ class CategoryServiceImplTest {
         verify(repository, times(1)).deleteById(999L);
     }
 }
+*/

@@ -23,7 +23,6 @@ public class FlowController {
     @PostMapping
     public String handleBooking(@ModelAttribute BookingRequestDTO request, Model model) {
         log.info("Started processing booking with id: {}", request.getEventId());
-
         try {
             Long bookingId = flowService.handleBooking(request);
             model.addAttribute("tickets", ticketService.findByBookingId(bookingId));
@@ -32,6 +31,7 @@ public class FlowController {
             log.error("Seat assignment failed for event {}: {}", request.getEventId(), e.getMessage());
             model.addAttribute("errorMessage", e.getMessage());
             return "redirect:/ui/bookings";
+
         }
     }
 
