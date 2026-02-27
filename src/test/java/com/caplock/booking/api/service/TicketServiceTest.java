@@ -63,7 +63,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void TicketService_findByHolderName() {
+    public void ticketService_findByHolderName_returnsTickets() {
         TicketEntity ticket = new TicketEntity();
         ticket.setHolderName("John Doe");
 
@@ -80,7 +80,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void TicketService_findByBookingId_returnsTickets() {
+    public void ticketService_findByBookingId_returnsTickets() {
         TicketEntity ticket = new TicketEntity();
         ticket.setId(1L);
         ticket.setBookingId(3L);
@@ -100,7 +100,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void TicketService_create_returnsCreatedTicket() throws Exception {
+    public void ticketService_create_returnsCreatedTicket() throws Exception {
         CreateTicketDTO createTicketDTO = new CreateTicketDTO();
         createTicketDTO.setHolderName("John Doe");
         createTicketDTO.setHolderEmail("john@example.com");
@@ -134,7 +134,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void TicketService_update_returnsSuccess() {
+    public void ticketService_update_returnsSuccess() {
         TicketDto updatedTicket = new TicketDto();
         updatedTicket.setHolderName("Jane Doe");
 
@@ -166,7 +166,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void TicketService_deleteById_returnsSuccess() {
+    public void ticketService_deleteById_returnsSuccess() {
         when(ticketRepository.existsById(1L)).thenReturn(true);
 
         ticketService.deleteById(1L);
