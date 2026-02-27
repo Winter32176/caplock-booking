@@ -2,13 +2,11 @@ package com.caplock.booking.service;
 
 import com.caplock.booking.entity.TicketType;
 import com.caplock.booking.entity.dto.EventTicketConfigDto;
-import com.caplock.booking.event.PaymentSucceededEvent;
-import com.caplock.booking.service.impl.SeatReservationServiceImpl;
+import com.caplock.booking.event.paymentSucceededEvent;
 import org.javatuples.Pair;
 import org.springframework.context.event.EventListener;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 public interface SeatReservationService {
 
@@ -17,7 +15,7 @@ public interface SeatReservationService {
     }
 
     @EventListener
-    void onPaymentSucceeded(PaymentSucceededEvent event) throws InterruptedException;
+    void onPaymentSucceeded(paymentSucceededEvent event) throws InterruptedException;
 
     /*
      * private

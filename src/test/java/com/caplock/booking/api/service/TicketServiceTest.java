@@ -46,7 +46,7 @@ public class TicketServiceTest {
     private TicketServiceImpl ticketService;
 
     @Test
-    public void TicketService_findAll_returnsTickets() {
+    public void ticket_service_findAll_returnsTickets() {
         TicketEntity ticket = new TicketEntity();
         ticket.setId(1L);
 

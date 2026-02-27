@@ -3,7 +3,7 @@ package com.caplock.booking.service.impl;
 import com.caplock.booking.entity.dto.PaymentDto;
 import com.caplock.booking.entity.dao.PaymentEntity;
 import com.caplock.booking.entity.StatusPaymentEnum;
-import com.caplock.booking.event.PaymentSucceededEvent;
+import com.caplock.booking.event.paymentSucceededEvent;
 import com.caplock.booking.repository.PaymentRepository;
 import com.caplock.booking.service.PaymentGateway;
 import com.caplock.booking.service.PaymentService;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +89,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private void publishIfPaid(PaymentEntity payment) {
         var success = payment.getStatus() == StatusPaymentEnum.PAID && payment.getBookingId() != null;
-        eventPublisher.publishEvent(new PaymentSucceededEvent(
+        eventPublisher.publishEvent(new paymentSucceededEvent(
                 payment.getId(),
                 payment.getBookingId(),
                 success

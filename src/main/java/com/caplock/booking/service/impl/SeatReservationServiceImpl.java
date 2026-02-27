@@ -2,10 +2,9 @@ package com.caplock.booking.service.impl;
 
 import com.caplock.booking.entity.TicketType;
 import com.caplock.booking.entity.dao.EventSeatsEntity;
-import com.caplock.booking.entity.dto.BookingRequestDTO;
 import com.caplock.booking.entity.dto.EventTicketConfigDto;
 import com.caplock.booking.entity.dto.TicketSelectionDTO;
-import com.caplock.booking.event.PaymentSucceededEvent;
+import com.caplock.booking.event.paymentSucceededEvent;
 import com.caplock.booking.repository.EventSeatRepository;
 import com.caplock.booking.service.BookingService;
 import com.caplock.booking.service.EventService;
@@ -44,13 +43,13 @@ public class SeatReservationServiceImpl implements SeatReservationService {
     private final ScheduledExecutorService reservationScheduler = Executors.newScheduledThreadPool(2);
 
     @EventListener
-    public void onPaymentSucceeded(PaymentSucceededEvent event) {
+    public void onPaymentSucceeded(paymentSucceededEvent event) {
         var timeout = paymentTimeouts.remove(event.bookingId());
         if (timeout != null) {
             timeout.cancel(false);
         }
 
-        if (event.Success()) {
+        if (event.success()) {
 
             var eventId = bookingService.getById(event.bookingId()).orElseThrow().getEventId();
             var seatMap = eventsSeat.get(eventId);
@@ -178,7 +177,7 @@ public class SeatReservationServiceImpl implements SeatReservationService {
             var seatsOfType = seats.stream().filter(seat -> seat.getValue1() == conf.getTicketType()).toList();
 
             if (conf.getTicketType().equals(seatsOfType.stream().findFirst().map(Pair::getValue1).orElse(null))
-                    & (conf.getAvailableSeats() == 0
+                    && (conf.getAvailableSeats() == 0
                     || conf.getAvailableSeats() < seatsOfType.size()))
                 return Pair.with(false, "Booking full, only " + conf.getAvailableSeats() + " can be only added");
         }

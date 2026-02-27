@@ -124,7 +124,7 @@ class PaymentServiceImplTest {
         PaymentDto dto = new PaymentDto();
         dto.setBookingId(2L);
         dto.setAmount(new BigDecimal("750.00"));
-        dto.setStatus(StatusPaymentEnum.PAID); // строчными буквами
+        dto.setStatus(StatusPaymentEnum.PAID);
 
         PaymentEntity savedDAO = new PaymentEntity();
         savedDAO.setId(1L);

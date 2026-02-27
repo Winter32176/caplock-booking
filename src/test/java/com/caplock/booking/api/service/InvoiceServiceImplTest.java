@@ -216,7 +216,6 @@ class InvoiceServiceImplTest {
 
     @AfterEach
     void cleanUp() throws IOException {
-        // Удаляем созданные тестовые файлы
         File dir = new File("invoices");
         if (dir.exists()) {
             for (File file : Objects.requireNonNull(dir.listFiles())) {
